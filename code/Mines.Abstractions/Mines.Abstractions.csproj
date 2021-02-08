@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Mikodev.Mines.Abstractions</AssemblyName>
+    <RootNamespace>Mikodev.Mines.Abstractions</RootNamespace>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+</Project>
