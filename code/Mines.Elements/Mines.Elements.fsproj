@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Mikodev.Mines.Elements</AssemblyName>
+    <RootNamespace>Mikodev.Mines.Elements</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Algorithms.fs" />
+    <Compile Include="MineGrid.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mines.Abstractions\Mines.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

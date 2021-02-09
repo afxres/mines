@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mines.Abstractions", "Mines.Abstractions\Mines.Abstractions.csproj", "{2562F8F3-FB9B-418D-A821-EEC66C81932B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mines.Abstractions", "Mines.Abstractions\Mines.Abstractions.csproj", "{2562F8F3-FB9B-418D-A821-EEC66C81932B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Mines.Elements", "Mines.Elements\Mines.Elements.fsproj", "{60877DA7-32D3-48F8-83CE-B42CB5319B5C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Mines.Elements.Tests", "Mines.Elements.Tests\Mines.Elements.Tests.fsproj", "{B55337A5-889D-4D2A-A97D-4883F9D439A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55337A5-889D-4D2A-A97D-4883F9D439A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55337A5-889D-4D2A-A97D-4883F9D439A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55337A5-889D-4D2A-A97D-4883F9D439A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55337A5-889D-4D2A-A97D-4883F9D439A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
