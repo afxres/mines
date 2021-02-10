@@ -2,5 +2,6 @@
 
 type TileMark =
     | None
+    | Tile
     | Flag
     | What
