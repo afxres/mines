@@ -60,6 +60,18 @@ type MineGrid(w : int, h : int, count : int) =
         if over then
             invalidOp "Game is over!"
 
+    // 递归翻开周围方块
+    let rec remove x y =
+        let i = flatten x y
+        let m = &face.[i]
+        match m with
+        | TileMark.Tile ->
+            m <- TileMark.None
+            match back.[i] with
+            | 0uy -> adjacent x y remove |> Seq.sum
+            | _ -> 1
+        | _ -> 0
+
     interface IMineGrid with
         member __.IsGameOver = over
 
@@ -92,31 +104,22 @@ type MineGrid(w : int, h : int, count : int) =
             // 第一次点击时生成地图
             if (back |> isNull) then
                 back <- generate i
-
-            // 递归翻开周围方块
-            let rec remove x y =
-                let i = flatten x y
-                let m = &face.[i]
-                match m with
-                | TileMark.Tile ->
-                    m <- TileMark.None
-                    match back.[i] with
-                    | 0uy -> adjacent x y remove |> Seq.sum
-                    | _ -> 1
-                | _ -> 0
-
             remove x y |> ignore
             ()
 
         member __.RemoveAll(x, y) =
             validate()
+
+            let drop a b =
+                let i = flatten a b
+                let m = &face.[i]
+                if (m = TileMark.What) then m <- TileMark.Tile
+                remove a b
+
             let i = flatten x y
             let n = int back.[i]
             if face.[i] = TileMark.None && n <> 0 then
-                let round = adjacent x y flatten
-                let flags = round |> Seq.map (Array.get face) |> Seq.filter ((=) TileMark.Flag)
+                let flags = adjacent x y flatten |> Seq.map (Array.get face) |> Seq.filter ((=) TileMark.Flag)
                 if (flags |> Seq.length) >= n then
-                    for i in round do
-                        if (face.[i] <> TileMark.Flag) then
-                            face.[i] <- TileMark.None
+                    adjacent x y drop |> Seq.sum |> ignore
             ()
