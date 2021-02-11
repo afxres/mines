@@ -12,6 +12,8 @@ open System
 type MineDisplayControl() as me =
     inherit Control()
 
+    let mutable coordinate : (int * int) option = None
+
     let mutable top : TopLevel = null
 
     let mutable grid : IMineGrid = null
@@ -34,22 +36,28 @@ type MineDisplayControl() as me =
             if rect.Contains(p) then
                 f m n
                 top.Renderer.AddDirty me
-                ()
-            ()
         ()
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
-        let point = e.GetCurrentPoint me
-        let position = point.Position
+        let current = e.GetCurrentPoint me
+        let properties = current.Properties
+        let position = current.Position
+
+        coordinate <- None
         handle position (fun x y ->
-            grid.Remove(x, y)
+            coordinate <- Some (x, y)
+            if properties.IsLeftButtonPressed then
+                grid.Remove(x, y)
+            elif properties.IsRightButtonPressed then
+                grid.Set(x, y)
             ())
         ())
 
-    let tappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
-        ())
-
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
+        match coordinate with
+        | Some (x, y) ->
+            grid.RemoveAll(x, y)
+        | None -> ()
         ())
 
     let attached () =
@@ -60,13 +68,11 @@ type MineDisplayControl() as me =
         me.Height <- double h * size + double (h - 1) * spacing
 
         top <- me.FindLogicalAncestorOfType<TopLevel>()
-        top.Tapped.AddHandler tappedHandler
         top.DoubleTapped.AddHandler doubleTappedHandler
         top.PointerPressed.AddHandler pointerPressedHandler
         ()
 
     let detached () =
-        top.Tapped.RemoveHandler tappedHandler
         top.DoubleTapped.RemoveHandler doubleTappedHandler
         top.PointerPressed.RemoveHandler pointerPressedHandler
         top <- null
@@ -74,10 +80,15 @@ type MineDisplayControl() as me =
         ()
 
     let render (d : DrawingContext) =
-        let number rect n =
-            d.DrawRectangle(Brushes.LightGray, null, rect, radius, radius)
-            let text = FormattedText(Text = string n, Typeface = Typeface.Default, FontSize = 14.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
-            d.DrawText(Brushes.DimGray, rect.TopLeft, text)
+        let text n =
+            FormattedText(Text = string n, Typeface = Typeface.Default, FontSize = 14.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
+
+        let draw rect (n : obj) =
+            let background = if n :? int then Brushes.LightGray else Brushes.Gray
+            let foreground = if n :? int then Brushes.DimGray else Brushes.White
+            d.DrawRectangle(background, null, rect, radius, radius)
+            if string n <> "0" then
+                d.DrawText(foreground, rect.TopLeft, text n)
             ()
 
         for m = 0 to w - 1 do
@@ -85,8 +96,9 @@ type MineDisplayControl() as me =
                 let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
                 match grid.Get(m, n) with
                 | MineMark.Tile -> d.DrawRectangle(Brushes.Gray, null, rect, radius, radius)
-                | n -> let x = int n in if (uint n) < 8u then number rect x else ()
-                ()
+                | MineMark.Flag -> draw rect "!"
+                | MineMark.What -> draw rect "?"
+                | n -> let x = int n in if (uint n) < 8u then draw rect x else ()
         ()
 
     override __.OnAttachedToLogicalTree e =
