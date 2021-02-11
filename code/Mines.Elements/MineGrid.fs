@@ -29,11 +29,12 @@ type MineGrid(w : int, h : int, count : int) =
         Array.fill origin 0 count Mine
         Algorithms.shuffleInPlace origin
         // 向数组的指定位置 (第一次翻开的位置) 插入空元素
-        let result = Array.concat (seq {
-            origin.[0..i]
+        let slices = [|
+            origin.[0..(i - 1)]
             Array.singleton 0uy
-            origin.[(i + 1)..]
-        })
+            origin.[i..]
+        |]
+        let result = Array.concat slices
         assert(result.Length = w * h)
 
         for m = 0 to w - 1 do
@@ -45,6 +46,7 @@ type MineGrid(w : int, h : int, count : int) =
                     result.[i] <- byte n
                 ()
 
+        assert(result.[i] <> Mine)
         assert(result |> Array.filter ((=) Mine) |> Array.length = count)
         result
 
@@ -90,10 +92,20 @@ type MineGrid(w : int, h : int, count : int) =
             // 第一次点击时生成地图
             if (back |> isNull) then
                 back <- generate i
-            let m = &face.[i]
-            match m with
-            | TileMark.Tile -> m <- TileMark.None
-            | _ -> ()
+
+            // 递归翻开周围方块
+            let rec remove x y =
+                let i = flatten x y
+                let m = &face.[i]
+                match m with
+                | TileMark.Tile ->
+                    m <- TileMark.None
+                    match back.[i] with
+                    | 0uy -> adjacent x y remove |> Seq.sum
+                    | _ -> 1
+                | _ -> 0
+
+            remove x y |> ignore
             ()
 
         member __.RemoveAll(x, y) =
