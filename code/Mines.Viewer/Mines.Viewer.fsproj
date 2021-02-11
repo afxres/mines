@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="MineDisplayControl.fs" />
     <Compile Include="MainWindow.xaml.fs" />
     <Compile Include="App.xaml.fs" />
     <Compile Include="Program.fs" />
@@ -26,6 +27,11 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mines.Abstractions\Mines.Abstractions.csproj" />
+    <ProjectReference Include="..\Mines.Elements\Mines.Elements.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
