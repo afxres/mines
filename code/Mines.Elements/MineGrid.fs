@@ -1,7 +1,7 @@
 ﻿namespace Mikodev.Mines.Elements
 
-open System
 open Mikodev.Mines.Abstractions
+open System
 
 type MineGrid(w : int, h : int, count : int) =
     [<Literal>]
@@ -56,6 +56,8 @@ type MineGrid(w : int, h : int, count : int) =
 
     let mutable back : byte array = null
 
+    let mutable miss : int = -1
+
     let validate () =
         if over then
             invalidOp "Game is over!"
@@ -69,6 +71,10 @@ type MineGrid(w : int, h : int, count : int) =
             m <- TileMark.None
             match back.[i] with
             | 0uy -> adjacent x y remove |> Seq.sum
+            | Mine ->
+                miss <- i
+                over <- true
+                1
             | _ -> 1
         | _ -> 0
 
@@ -81,16 +87,17 @@ type MineGrid(w : int, h : int, count : int) =
 
         member __.Get(x, y) =
             let i = flatten x y
+            let b = if back |> isNull then -1 else int back.[i]
+            let m = b = int Mine
             match face.[i] with
-            | TileMark.Tile -> MineMark.Tile
-            | TileMark.Flag -> MineMark.Flag
-            | TileMark.What -> MineMark.What
+            | TileMark.Tile -> if over && m then MineMark.Mine else MineMark.Tile
+            | TileMark.Flag -> if over && not m then MineMark.FlagMiss else MineMark.Flag
+            | TileMark.What -> if over && not m then MineMark.WhatMiss else MineMark.What
             | _ ->
-                let item = int back.[i]
-                if (item = int Mine) then
-                    MineMark.Mine
+                if m then
+                    if i <> miss then MineMark.Mine else MineMark.MineMiss
                 else
-                    enum<MineMark>(item)
+                    enum<MineMark>(b)
 
         member __.Set(x, y) =
             validate()

@@ -39,19 +39,19 @@ type MineDisplayControl() as me =
         ()
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
-        let current = e.GetCurrentPoint me
-        let properties = current.Properties
-        let position = current.Position
-
         coordinate <- None
-        handle position (fun x y ->
-            coordinate <- Some (x, y)
-            if properties.IsLeftButtonPressed then
-                grid.Remove(x, y)
-            elif properties.IsRightButtonPressed then
-                grid.Set(x, y)
+        if not grid.IsGameOver then
+            let current = e.GetCurrentPoint me
+            let properties = current.Properties
+            let position = current.Position
+            handle position (fun x y ->
+                coordinate <- Some (x, y)
+                if properties.IsLeftButtonPressed then
+                    grid.Remove(x, y)
+                elif properties.IsRightButtonPressed then
+                    grid.Set(x, y)
+                ())
             ())
-        ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         match coordinate with
@@ -107,15 +107,16 @@ type MineDisplayControl() as me =
             let brush =
                 match m with
                 | MineMark.Tile | MineMark.Flag | MineMark.What -> Brushes.Gray
+                | MineMark.MineMiss | MineMark.FlagMiss | MineMark.WhatMiss -> Brushes.Red
                 | _ -> Brushes.LightGray
             d.DrawRectangle(brush, null, rect, radius, radius)
 
         let face rect m =
             match m with
             | MineMark.None | MineMark.Tile -> ()
-            | MineMark.Mine -> mine d rect
-            | MineMark.Flag -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
-            | MineMark.What -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
+            | MineMark.Mine | MineMark.MineMiss -> mine d rect
+            | MineMark.Flag | MineMark.FlagMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
+            | MineMark.What | MineMark.WhatMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
             | _ -> d.DrawText(Brushes.Black, rect.TopLeft, texts.[string (int m)])
 
         for m = 0 to w - 1 do

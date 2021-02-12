@@ -23,7 +23,7 @@
         /// <summary>
         /// 地雷 (错误点击)
         /// </summary>
-        Trap,
+        MineMiss,
 
         /// <summary>
         /// 旗帜
@@ -31,8 +31,18 @@
         Flag,
 
         /// <summary>
+        /// 旗帜 (错误标记)
+        /// </summary>
+        FlagMiss,
+
+        /// <summary>
         /// 问号
         /// </summary>
         What,
+
+        /// <summary>
+        /// 问号 (错误标记)
+        /// </summary>
+        WhatMiss,
     }
 }

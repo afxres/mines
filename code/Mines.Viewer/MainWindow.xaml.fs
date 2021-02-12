@@ -9,7 +9,7 @@ type MainWindow() as me =
 
     do
         AvaloniaXamlLoader.Load me
-        me.DataContext <- MineGrid(16, 16, 40)
+        me.DataContext <- MineGrid(30, 16, 99)
         let box = Viewbox()
         box.Child <- MineDisplayControl()
         me.Content <- box
