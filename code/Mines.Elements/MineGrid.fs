@@ -85,7 +85,12 @@ type MineGrid(w : int, h : int, count : int) =
             | TileMark.Tile -> MineMark.Tile
             | TileMark.Flag -> MineMark.Flag
             | TileMark.What -> MineMark.What
-            | _ -> enum<MineMark>(int back.[i])
+            | _ ->
+                let item = int back.[i]
+                if (item = int Mine) then
+                    MineMark.Mine
+                else
+                    enum<MineMark>(item)
 
         member __.Set(x, y) =
             validate()

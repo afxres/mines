@@ -22,11 +22,11 @@ type MineDisplayControl() as me =
 
     let mutable h : int = 0
 
-    let size = 20.0
+    let size = 32.0
 
-    let spacing = 2.0
+    let spacing = 3.0
 
-    let radius = 2.0
+    let radius = 3.0
 
     let handle (p : Point) (f : int -> int -> unit) =
         if me.Bounds.Contains p then
@@ -79,26 +79,51 @@ type MineDisplayControl() as me =
         grid <- null
         ()
 
-    let render (d : DrawingContext) =
-        let text n =
-            FormattedText(Text = string n, Typeface = Typeface.Default, FontSize = 14.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
-
-        let draw rect (n : obj) =
-            let background = if n :? int then Brushes.LightGray else Brushes.Gray
-            let foreground = if n :? int then Brushes.DimGray else Brushes.White
-            d.DrawRectangle(background, null, rect, radius, radius)
-            if string n <> "0" then
-                d.DrawText(foreground, rect.TopLeft, text n)
+    let mine =
+        let closure (r : DrawingGroup) (d : DrawingContext) (rect : Rect) =
+            let c = d.CurrentTransform
+            let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
+            let s = d.PushSetTransform m
+            r.Draw d
+            s.Dispose()
             ()
+
+        let k = "Mines.Drawing.Mine"
+        let r = Application.Current.Resources.[k] :?> DrawingGroup
+        closure r
+
+    let texts =
+        let text n =
+            FormattedText(Text = n, Typeface = Typeface.Default, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
+        let seq = seq {
+            for i in 1..7 -> string i
+            yield "!"
+            yield "?"
+        }
+        seq |> Seq.map (fun x -> x, text x) |> Map
+
+    let render (d : DrawingContext) =
+        let back rect m =
+            let brush =
+                match m with
+                | MineMark.Tile | MineMark.Flag | MineMark.What -> Brushes.Gray
+                | _ -> Brushes.LightGray
+            d.DrawRectangle(brush, null, rect, radius, radius)
+
+        let face rect m =
+            match m with
+            | MineMark.None | MineMark.Tile -> ()
+            | MineMark.Mine -> mine d rect
+            | MineMark.Flag -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
+            | MineMark.What -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
+            | _ -> d.DrawText(Brushes.Black, rect.TopLeft, texts.[string (int m)])
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
                 let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
-                match grid.Get(m, n) with
-                | MineMark.Tile -> d.DrawRectangle(Brushes.Gray, null, rect, radius, radius)
-                | MineMark.Flag -> draw rect "!"
-                | MineMark.What -> draw rect "?"
-                | n -> let x = int n in if (uint n) < 8u then draw rect x else ()
+                let mark = grid.Get(m, n)
+                back rect mark
+                face rect mark
         ()
 
     override __.OnAttachedToLogicalTree e =
