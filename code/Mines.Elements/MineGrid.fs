@@ -1,6 +1,6 @@
 ﻿namespace Mikodev.Mines.Elements
 
-open Mikodev.Mines.Abstractions
+open Mikodev.Mines.Annotations
 open System
 
 type MineGrid(w : int, h : int, count : int) =
@@ -79,7 +79,9 @@ type MineGrid(w : int, h : int, count : int) =
         | _ -> 0
 
     interface IMineGrid with
-        member __.IsGameOver = over
+        member __.IsDone = raise (NotImplementedException())
+
+        member __.IsOver = over
 
         member __.XMax = w
 
@@ -90,14 +92,14 @@ type MineGrid(w : int, h : int, count : int) =
             let b = if back |> isNull then -1 else int back.[i]
             let m = b = int Mine
             match face.[i] with
-            | TileMark.Tile -> if over && m then MineMark.Mine else MineMark.Tile
-            | TileMark.Flag -> if over && not m then MineMark.FlagMiss else MineMark.Flag
-            | TileMark.What -> if over && not m then MineMark.WhatMiss else MineMark.What
+            | TileMark.Tile -> if over && m then MineData.Mine else MineData.Tile
+            | TileMark.Flag -> if over && not m then MineData.FlagMiss else MineData.Flag
+            | TileMark.What -> if over && not m then MineData.WhatMiss else MineData.What
             | _ ->
                 if m then
-                    if i <> miss then MineMark.Mine else MineMark.MineMiss
+                    if i <> miss then MineData.Mine else MineData.MineMiss
                 else
-                    enum<MineMark>(b)
+                    enum<MineData>(b)
 
         member __.Set(x, y) =
             validate()

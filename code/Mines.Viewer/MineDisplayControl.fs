@@ -6,7 +6,7 @@ open Avalonia.Input
 open Avalonia.Interactivity
 open Avalonia.LogicalTree
 open Avalonia.Media
-open Mikodev.Mines.Abstractions
+open Mikodev.Mines.Annotations
 open System
 
 type MineDisplayControl() as me =
@@ -40,7 +40,7 @@ type MineDisplayControl() as me =
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
         coordinate <- None
-        if not grid.IsGameOver then
+        if not grid.IsOver then
             let current = e.GetCurrentPoint me
             let properties = current.Properties
             let position = current.Position
@@ -106,17 +106,17 @@ type MineDisplayControl() as me =
         let back rect m =
             let brush =
                 match m with
-                | MineMark.Tile | MineMark.Flag | MineMark.What -> Brushes.Gray
-                | MineMark.MineMiss | MineMark.FlagMiss | MineMark.WhatMiss -> Brushes.Red
+                | MineData.Tile | MineData.Flag | MineData.What -> Brushes.Gray
+                | MineData.MineMiss | MineData.FlagMiss | MineData.WhatMiss -> Brushes.Red
                 | _ -> Brushes.LightGray
             d.DrawRectangle(brush, null, rect, radius, radius)
 
         let face rect m =
             match m with
-            | MineMark.None | MineMark.Tile -> ()
-            | MineMark.Mine | MineMark.MineMiss -> mine d rect
-            | MineMark.Flag | MineMark.FlagMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
-            | MineMark.What | MineMark.WhatMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
+            | MineData.Tile | MineData.``0`` -> ()
+            | MineData.Mine | MineData.MineMiss -> mine d rect
+            | MineData.Flag | MineData.FlagMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
+            | MineData.What | MineData.WhatMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
             | _ -> d.DrawText(Brushes.Black, rect.TopLeft, texts.[string (int m)])
 
         for m = 0 to w - 1 do

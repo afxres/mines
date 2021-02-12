@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mines.Abstractions\Mines.Abstractions.csproj" />
     <ProjectReference Include="..\Mines.Elements\Mines.Elements.fsproj" />
   </ItemGroup>
 

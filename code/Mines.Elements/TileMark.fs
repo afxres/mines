@@ -1,7 +1,7 @@
 ﻿namespace Mikodev.Mines.Elements
 
 type TileMark =
-    | None
-    | Tile
-    | Flag
-    | What
+    | None = 0
+    | Tile = 1
+    | Flag = 2
+    | What = 3

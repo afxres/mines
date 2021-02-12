@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mines.Abstractions", "Mines.Abstractions\Mines.Abstractions.csproj", "{2562F8F3-FB9B-418D-A821-EEC66C81932B}"
-EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Mines.Elements", "Mines.Elements\Mines.Elements.fsproj", "{60877DA7-32D3-48F8-83CE-B42CB5319B5C}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Mines.Elements.Tests", "Mines.Elements.Tests\Mines.Elements.Tests.fsproj", "{B55337A5-889D-4D2A-A97D-4883F9D439A7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Mines.Viewer", "Mines.Viewer\Mines.Viewer.fsproj", "{C6A1EEC1-CAA7-4066-BFAB-4D29A842CCCD}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Mines.Viewer", "Mines.Viewer\Mines.Viewer.fsproj", "{C6A1EEC1-CAA7-4066-BFAB-4D29A842CCCD}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Mines.Annotations", "Mines.Annotations\Mines.Annotations.fsproj", "{C2ECD293-ECAB-48DE-9593-03ABEE64C47A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2562F8F3-FB9B-418D-A821-EEC66C81932B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60877DA7-32D3-48F8-83CE-B42CB5319B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{C6A1EEC1-CAA7-4066-BFAB-4D29A842CCCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6A1EEC1-CAA7-4066-BFAB-4D29A842CCCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6A1EEC1-CAA7-4066-BFAB-4D29A842CCCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2ECD293-ECAB-48DE-9593-03ABEE64C47A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2ECD293-ECAB-48DE-9593-03ABEE64C47A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2ECD293-ECAB-48DE-9593-03ABEE64C47A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2ECD293-ECAB-48DE-9593-03ABEE64C47A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
