@@ -24,28 +24,15 @@ let flattenIndex (w : int) (h : int) (x : int) (y : int) =
 let mapAdjacentIndexes (w : int) (h : int) (x : int) (y : int) (f : int -> int -> 'T) =
     if w < 0 || h < 0 || uint x > uint w || uint y > uint h then
         raise (ArgumentOutOfRangeException())
-    // 判断上下左右是否存在
-    let l = x > 0
-    let r = x < w - 1
-    let t = y > 0
-    let b = y < h - 1
 
-    // 依次枚举左中右三个元素
-    let action line = seq {
-        if l then
-            yield f (x - 1) line
-        // 排除自身
-        if y <> line then
-            yield f x line
-        if r then
-            yield f (x + 1) line
-    }
+    let l = if x > 0 then -1 else 0
+    let t = if y > 0 then -1 else 0
+    let r = if x < w - 1 then 1 else 0
+    let b = if y < h - 1 then 1 else 0
 
-    // 依次枚举上中下三行
     seq {
-        if t then
-            yield! action (y - 1)
-        yield! action y
-        if b then
-            yield! action (y + 1)
+        for v = t to b do
+            for i = l to r do
+                if v <> 0 || i <> 0 then
+                    yield f (x + i) (y + v)
     }
