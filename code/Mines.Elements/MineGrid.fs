@@ -106,10 +106,10 @@ type MineGrid(w : int, h : int, count : int) =
             let i = flatten x y
             let m = &face.[i]
             match m with
-            | TileMark.None -> ()
             | TileMark.Tile -> m <- TileMark.Flag
             | TileMark.Flag -> m <- TileMark.What
             | TileMark.What -> m <- TileMark.Tile
+            | _ -> ()
             ()
 
         member __.Remove(x, y) =
