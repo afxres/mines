@@ -87,6 +87,10 @@ type MineGrid(w : int, h : int, count : int) =
 
         member __.YMax = h
 
+        member __.FlagCount = raise (NotImplementedException())
+
+        member __.MineCount = count
+
         member __.Get(x, y) =
             let i = flatten x y
             let b = if back |> isNull then -1 else int back.[i]

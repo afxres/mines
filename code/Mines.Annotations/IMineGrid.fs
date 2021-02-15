@@ -10,6 +10,10 @@ type IMineGrid =
 
     abstract member YMax : int
 
+    abstract member FlagCount : int
+
+    abstract member MineCount : int
+
     abstract member Get : x : int * y : int -> MineData
 
     abstract member Set : x : int * y : int -> unit
