@@ -52,11 +52,15 @@ type MineGrid(w : int, h : int, count : int) =
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
-    let mutable over : bool = false
+    let mutable over = false
+
+    let mutable good = false
 
     let mutable back : byte array = null
 
-    let mutable miss : int = -1
+    let mutable miss = -1
+
+    let mutable tile = w * h
 
     let validate () =
         if over then
@@ -70,7 +74,7 @@ type MineGrid(w : int, h : int, count : int) =
         | TileMark.Tile ->
             m <- TileMark.None
             match back.[i] with
-            | 0uy -> adjacent x y remove |> Seq.sum
+            | 0uy -> adjacent x y remove |> Seq.sum |> (+) 1
             | Mine ->
                 miss <- i
                 over <- true
@@ -78,8 +82,16 @@ type MineGrid(w : int, h : int, count : int) =
             | _ -> 1
         | _ -> 0
 
+    let finish n =
+        assert(n <= tile && n >= 0)
+        tile <- tile - n
+        assert(face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
+        if not over && tile = count then
+            good <- true
+        ()
+
     interface IMineGrid with
-        member __.IsDone = raise (NotImplementedException())
+        member __.IsDone = good
 
         member __.IsOver = over
 
@@ -122,7 +134,7 @@ type MineGrid(w : int, h : int, count : int) =
             // 第一次点击时生成地图
             if (back |> isNull) then
                 back <- generate i
-            remove x y |> ignore
+            remove x y |> finish
             ()
 
         member __.RemoveAll(x, y) =
@@ -139,5 +151,5 @@ type MineGrid(w : int, h : int, count : int) =
             if face.[i] = TileMark.None && n <> 0 then
                 let flags = adjacent x y flatten |> Seq.map (Array.get face) |> Seq.filter ((=) TileMark.Flag)
                 if (flags |> Seq.length) >= n then
-                    adjacent x y drop |> Seq.sum |> ignore
+                    adjacent x y drop |> Seq.sum |> finish
             ()
