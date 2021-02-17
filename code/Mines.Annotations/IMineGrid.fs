@@ -6,6 +6,8 @@ type IMineGrid =
 
     abstract member IsOver : bool
 
+    abstract member Status : MineGridStatus
+
     abstract member XMax : int
 
     abstract member YMax : int

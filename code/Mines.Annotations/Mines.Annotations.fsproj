@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="MineData.fs" />
+    <Compile Include="MineGridStatus.fs" />
     <Compile Include="IMineGrid.fs" />
   </ItemGroup>
 

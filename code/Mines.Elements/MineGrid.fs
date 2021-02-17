@@ -103,6 +103,8 @@ type MineGrid(w : int, h : int, count : int) as me =
         ()
 
     interface IMineGrid with
+        member __.Status: MineGridStatus = raise (NotImplementedException())
+
         member __.IsDone = good
 
         member __.IsOver = over
