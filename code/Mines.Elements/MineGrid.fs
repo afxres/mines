@@ -47,7 +47,7 @@ type MineGrid(w : int, h : int, count : int) =
                 ()
 
         assert(result.[i] <> Mine)
-        assert(result |> Array.filter ((=) Mine) |> Array.length = count)
+        assert(result |> Seq.filter ((=) Mine) |> Seq.length = count)
         result
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
@@ -61,6 +61,8 @@ type MineGrid(w : int, h : int, count : int) =
     let mutable miss = -1
 
     let mutable tile = w * h
+
+    let mutable flag = 0
 
     let validate () =
         if over then
@@ -99,7 +101,7 @@ type MineGrid(w : int, h : int, count : int) =
 
         member __.YMax = h
 
-        member __.FlagCount = raise (NotImplementedException())
+        member __.FlagCount = flag
 
         member __.MineCount = count
 
@@ -122,10 +124,11 @@ type MineGrid(w : int, h : int, count : int) =
             let i = flatten x y
             let m = &face.[i]
             match m with
-            | TileMark.Tile -> m <- TileMark.Flag
-            | TileMark.Flag -> m <- TileMark.What
+            | TileMark.Tile -> m <- TileMark.Flag; flag <- flag + 1
+            | TileMark.Flag -> m <- TileMark.What; flag <- flag - 1
             | TileMark.What -> m <- TileMark.Tile
             | _ -> ()
+            assert(face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
             ()
 
         member __.Remove(x, y) =
