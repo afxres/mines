@@ -23,7 +23,7 @@ type MainWindow() as me =
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
                 t.Text <- e.ToString()
-                let m = 1000 - e.Milliseconds
+                let m = if stopwatch.IsRunning then 1000 - e.Milliseconds else 100
                 do! Async.Sleep (TimeSpan.FromMilliseconds (double m))
             ()
         }
@@ -35,8 +35,15 @@ type MainWindow() as me =
         tag.Text <- $"{grid.FlagCount} / {grid.MineCount}"
         ()
 
+    let finish () =
+        let grid = me.DataContext :?> IMineGrid
+        if (grid.Status <> MineGridStatus.None) then
+            stopwatch.Stop()
+        ()
+
     let propertyChangedHandler = PropertyChangedEventHandler(fun _ e ->
         match e.PropertyName with
+        | "Status" -> finish ()
         | "FlagCount" -> notify ()
         | _ -> ()
         ())
