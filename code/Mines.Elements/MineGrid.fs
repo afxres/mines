@@ -51,7 +51,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         assert(result |> Seq.filter ((=) Mine) |> Seq.length = count)
         result
 
-    let changed = Event<_, _>()
+    let notify = Event<_, _>()
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
@@ -71,7 +71,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         assert(typeof<IMineGrid>.GetProperty name <> null)
         if (item <> data) then
             item <- data
-            changed.Trigger(me, PropertyChangedEventArgs name)
+            notify.Trigger(me, PropertyChangedEventArgs name)
         ()
 
     let validate () =
@@ -171,4 +171,4 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     interface INotifyPropertyChanged with
         [<CLIEvent>]
-        member __.PropertyChanged = changed.Publish
+        member __.PropertyChanged = notify.Publish
