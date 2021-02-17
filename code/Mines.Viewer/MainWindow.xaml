@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:annotations="clr-namespace:Mikodev.Mines.Annotations;assembly=Mikodev.Mines.Annotations"
     Title="Mines"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -12,7 +11,10 @@
   <Grid ColumnDefinitions="* Auto">
     <Viewbox x:Name="viewer" Grid.Column="0" Margin="16" />
     <Grid Grid.Column="1" Width="320">
-      <TextBlock x:Name="marker" FontSize="24" />
+      <StackPanel>
+        <TextBlock x:Name="marker" FontSize="24" />
+        <TextBlock x:Name="ticker" FontSize="24" />
+      </StackPanel>
     </Grid>
   </Grid>
 </Window>

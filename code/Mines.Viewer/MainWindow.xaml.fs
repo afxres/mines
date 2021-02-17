@@ -4,10 +4,29 @@ open Avalonia.Controls
 open Avalonia.Markup.Xaml
 open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
+open System
 open System.ComponentModel
+open System.Diagnostics
+open System.Threading
 
 type MainWindow() as me =
     inherit Window()
+
+    let stopwatch = Stopwatch()
+
+    let source = new CancellationTokenSource()
+
+    let ticker () =
+        let t = me.Find<TextBlock> "ticker"
+        assert(t <> null)
+        async {
+            while not source.IsCancellationRequested do
+                let e = stopwatch.Elapsed
+                t.Text <- e.ToString()
+                let m = 1000 - e.Milliseconds
+                do! Async.Sleep (TimeSpan.FromMilliseconds (double m))
+            ()
+        }
 
     let notify () =
         let grid = me.DataContext :?> IMineGrid
@@ -34,7 +53,19 @@ type MainWindow() as me =
         notify ()
         ()
 
+    let closed () =
+        source.Cancel()
+        source.Dispose()
+        ()
+
     do
         AvaloniaXamlLoader.Load me
+        ticker () |> Async.StartImmediate
         update (MineGrid(30, 16, 99))
+        stopwatch.Start()
+        ()
+
+    override __.OnClosed e =
+        base.OnClosed e
+        closed ()
         ()
