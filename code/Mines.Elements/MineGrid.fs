@@ -120,11 +120,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             | TileMark.Tile -> if f && m then MineData.Mine else MineData.Tile
             | TileMark.Flag -> if f && not m then MineData.FlagMiss else MineData.Flag
             | TileMark.What -> if f && not m then MineData.WhatMiss else MineData.What
-            | _ ->
-                if m then
-                    if i <> miss then MineData.Mine else MineData.MineMiss
-                else
-                    enum<MineData>(b)
+            | _ -> if i = miss then MineData.MineMiss elif m then MineData.Mine else enum<MineData> b
 
         member __.Set(x, y) =
             validate()
