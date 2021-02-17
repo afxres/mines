@@ -2,8 +2,9 @@
 
 open Mikodev.Mines.Annotations
 open System
+open System.ComponentModel
 
-type MineGrid(w : int, h : int, count : int) =
+type MineGrid(w : int, h : int, count : int) as me =
     [<Literal>]
     let Mine : byte = 0xFFuy
 
@@ -50,6 +51,8 @@ type MineGrid(w : int, h : int, count : int) =
         assert(result |> Seq.filter ((=) Mine) |> Seq.length = count)
         result
 
+    let changed = Event<_, _>()
+
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
     let mutable over = false
@@ -63,6 +66,13 @@ type MineGrid(w : int, h : int, count : int) =
     let mutable tile = w * h
 
     let mutable flag = 0
+
+    let change (item : 'a byref) data name =
+        assert(typeof<IMineGrid>.GetProperty name <> null)
+        if (item <> data) then
+            item <- data
+            changed.Trigger(me, PropertyChangedEventArgs name)
+        ()
 
     let validate () =
         if over then
@@ -79,7 +89,7 @@ type MineGrid(w : int, h : int, count : int) =
             | 0uy -> adjacent x y remove |> Seq.sum |> (+) 1
             | Mine ->
                 miss <- i
-                over <- true
+                change &over true "IsOver"
                 1
             | _ -> 1
         | _ -> 0
@@ -89,7 +99,7 @@ type MineGrid(w : int, h : int, count : int) =
         tile <- tile - n
         assert(face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
         if not over && tile = count then
-            good <- true
+            change &good true "IsDone"
         ()
 
     interface IMineGrid with
@@ -124,8 +134,8 @@ type MineGrid(w : int, h : int, count : int) =
             let i = flatten x y
             let m = &face.[i]
             match m with
-            | TileMark.Tile -> m <- TileMark.Flag; flag <- flag + 1
-            | TileMark.Flag -> m <- TileMark.What; flag <- flag - 1
+            | TileMark.Tile -> m <- TileMark.Flag; change &flag (flag + 1) "FlagCount"
+            | TileMark.Flag -> m <- TileMark.What; change &flag (flag - 1) "FlagCount"
             | TileMark.What -> m <- TileMark.Tile
             | _ -> ()
             assert(face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
@@ -156,3 +166,7 @@ type MineGrid(w : int, h : int, count : int) =
                 if (flags |> Seq.length) >= n then
                     adjacent x y drop |> Seq.sum |> finish
             ()
+
+    interface INotifyPropertyChanged with
+        [<CLIEvent>]
+        member __.PropertyChanged = changed.Publish
