@@ -2,10 +2,6 @@
 
 [<AllowNullLiteral>]
 type IMineGrid =
-    abstract member IsDone : bool
-
-    abstract member IsOver : bool
-
     abstract member Status : MineGridStatus
 
     abstract member XMax : int

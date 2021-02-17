@@ -55,9 +55,7 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
-    let mutable over = false
-
-    let mutable good = false
+    let mutable status = MineGridStatus.None
 
     let mutable back : byte array = null
 
@@ -75,7 +73,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         ()
 
     let validate () =
-        if over then
+        if status <> MineGridStatus.None then
             invalidOp "Game is over!"
 
     // 递归翻开周围方块
@@ -87,10 +85,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             m <- TileMark.None
             match back.[i] with
             | 0uy -> adjacent x y remove |> Seq.sum |> (+) 1
-            | Mine ->
-                miss <- i
-                change &over true "IsOver"
-                1
+            | Mine -> miss <- i; 1
             | _ -> 1
         | _ -> 0
 
@@ -98,16 +93,15 @@ type MineGrid(w : int, h : int, count : int) as me =
         assert(n <= tile && n >= 0)
         tile <- tile - n
         assert(face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
-        if not over && tile = count then
-            change &good true "IsDone"
+        assert(status = MineGridStatus.None)
+        if miss <> -1 then
+            change &status MineGridStatus.Over "Status"
+        elif tile = count then
+            change &status MineGridStatus.Done "Status"
         ()
 
     interface IMineGrid with
-        member __.Status: MineGridStatus = raise (NotImplementedException())
-
-        member __.IsDone = good
-
-        member __.IsOver = over
+        member __.Status: MineGridStatus = status
 
         member __.XMax = w
 
@@ -121,10 +115,11 @@ type MineGrid(w : int, h : int, count : int) as me =
             let i = flatten x y
             let b = if back |> isNull then -1 else int back.[i]
             let m = b = int Mine
+            let f = status = MineGridStatus.Over
             match face.[i] with
-            | TileMark.Tile -> if over && m then MineData.Mine else MineData.Tile
-            | TileMark.Flag -> if over && not m then MineData.FlagMiss else MineData.Flag
-            | TileMark.What -> if over && not m then MineData.WhatMiss else MineData.What
+            | TileMark.Tile -> if f && m then MineData.Mine else MineData.Tile
+            | TileMark.Flag -> if f && not m then MineData.FlagMiss else MineData.Flag
+            | TileMark.What -> if f && not m then MineData.WhatMiss else MineData.What
             | _ ->
                 if m then
                     if i <> miss then MineData.Mine else MineData.MineMiss

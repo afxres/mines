@@ -40,7 +40,7 @@ type MineDisplayControl() as me =
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
         coordinate <- None
-        if not grid.IsOver then
+        if grid.Status = MineGridStatus.None then
             let current = e.GetCurrentPoint me
             let properties = current.Properties
             let position = current.Position
