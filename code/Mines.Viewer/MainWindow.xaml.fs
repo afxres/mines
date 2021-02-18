@@ -18,13 +18,13 @@ type MainWindow() as me =
 
     let ticker () =
         let t = me.Find<TextBlock> "ticker"
+        let i = TimeSpan.FromMilliseconds (double 33)
         assert (t <> null)
         async {
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
-                t.Text <- e.ToString()
-                let m = if stopwatch.IsRunning then 1000 - e.Milliseconds else 100
-                do! Async.Sleep (TimeSpan.FromMilliseconds (double m))
+                t.Text <- e.ToString @"d'.'hh':'mm':'ss'.'ff"
+                do! Async.Sleep i
             ()
         }
 
