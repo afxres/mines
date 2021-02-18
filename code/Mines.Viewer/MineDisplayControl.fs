@@ -39,8 +39,7 @@ type MineDisplayControl() as me =
         ()
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
-        coordinate <- None
-        if grid.Status = MineGridStatus.None then
+        let invoke () =
             let current = e.GetCurrentPoint me
             let properties = current.Properties
             let position = current.Position
@@ -51,7 +50,13 @@ type MineDisplayControl() as me =
                 elif properties.IsRightButtonPressed then
                     grid.Set(x, y)
                 ())
-            ())
+            ()
+
+        coordinate <- None
+        match grid.Status with
+        | MineGridStatus.None | MineGridStatus.Wait -> invoke ()
+        | _ -> ()
+        ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         match coordinate with

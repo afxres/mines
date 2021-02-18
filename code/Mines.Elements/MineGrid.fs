@@ -55,7 +55,7 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
-    let mutable status = MineGridStatus.None
+    let mutable step = MineGridStatus.None
 
     let mutable back : byte array = null
 
@@ -65,16 +65,22 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let mutable flag = 0
 
-    let change (item : 'a byref) data name =
+    let update (item : 'a byref) data name =
         assert(typeof<IMineGrid>.GetProperty name <> null)
-        if (item <> data) then
-            item <- data
-            notify.Trigger(me, PropertyChangedEventArgs name)
+        assert(item <> data)
+        item <- data
+        notify.Trigger(me, PropertyChangedEventArgs name)
         ()
 
+    let step' x = update &step x "Status"
+
+    let flag' x = update &flag x "FlagCount"
+
     let validate () =
-        if status <> MineGridStatus.None then
-            invalidOp "Game is over!"
+        match step with
+        | MineGridStatus.Over | MineGridStatus.Done -> invalidOp "Game is over!"
+        | _ -> ()
+        ()
 
     // 递归翻开周围方块
     let rec remove x y =
@@ -93,15 +99,15 @@ type MineGrid(w : int, h : int, count : int) as me =
         assert(n <= tile && n >= 0)
         tile <- tile - n
         assert(face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
-        assert(status = MineGridStatus.None)
+        assert(step = MineGridStatus.Wait)
         if miss <> -1 then
-            change &status MineGridStatus.Over "Status"
+            step' MineGridStatus.Over
         elif tile = count then
-            change &status MineGridStatus.Done "Status"
+            step' MineGridStatus.Done
         ()
 
     interface IMineGrid with
-        member __.Status: MineGridStatus = status
+        member __.Status: MineGridStatus = step
 
         member __.XMax = w
 
@@ -115,7 +121,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             let i = flatten x y
             let b = if back |> isNull then -1 else int back.[i]
             let m = b = int Mine
-            let f = status = MineGridStatus.Over
+            let f = step = MineGridStatus.Over
             match face.[i] with
             | TileMark.Tile -> if f && m then MineData.Mine else MineData.Tile
             | TileMark.Flag -> if f && not m then MineData.FlagMiss else MineData.Flag
@@ -127,8 +133,8 @@ type MineGrid(w : int, h : int, count : int) as me =
             let i = flatten x y
             let m = &face.[i]
             match m with
-            | TileMark.Tile -> m <- TileMark.Flag; change &flag (flag + 1) "FlagCount"
-            | TileMark.Flag -> m <- TileMark.What; change &flag (flag - 1) "FlagCount"
+            | TileMark.Tile -> m <- TileMark.Flag; flag' (flag + 1)
+            | TileMark.Flag -> m <- TileMark.What; flag' (flag - 1)
             | TileMark.What -> m <- TileMark.Tile
             | _ -> ()
             assert(face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
@@ -140,6 +146,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             // 第一次点击时生成地图
             if (back |> isNull) then
                 back <- generate i
+                step' MineGridStatus.Wait
             remove x y |> finish
             ()
 

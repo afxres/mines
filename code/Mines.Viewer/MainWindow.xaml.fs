@@ -37,8 +37,10 @@ type MainWindow() as me =
 
     let finish () =
         let grid = me.DataContext :?> IMineGrid
-        if (grid.Status <> MineGridStatus.None) then
-            stopwatch.Stop()
+        match grid.Status with
+        | MineGridStatus.Wait -> stopwatch.Start()
+        | MineGridStatus.Over | MineGridStatus.Done -> stopwatch.Stop()
+        | _ -> Debug.Fail "What's wrong?"
         ()
 
     let propertyChangedHandler = PropertyChangedEventHandler(fun _ e ->
@@ -69,7 +71,6 @@ type MainWindow() as me =
         AvaloniaXamlLoader.Load me
         ticker () |> Async.StartImmediate
         update (MineGrid(30, 16, 99))
-        stopwatch.Start()
         ()
 
     override __.OnClosed e =
