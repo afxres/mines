@@ -2,5 +2,6 @@
 
 type MineGridStatus =
     | None = 0
-    | Over = 1
-    | Done = 2
+    | Wait = 1
+    | Over = 2
+    | Done = 3
