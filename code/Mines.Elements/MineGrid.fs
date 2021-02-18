@@ -36,7 +36,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             origin.[i..]
         |]
         let result = Array.concat slices
-        assert(result.Length = w * h)
+        assert (result.Length = w * h)
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
@@ -47,8 +47,8 @@ type MineGrid(w : int, h : int, count : int) as me =
                     result.[i] <- byte n
                 ()
 
-        assert(result.[i] <> Mine)
-        assert(result |> Seq.filter ((=) Mine) |> Seq.length = count)
+        assert (result.[i] <> Mine)
+        assert (result |> Seq.filter ((=) Mine) |> Seq.length = count)
         result
 
     let notify = Event<_, _>()
@@ -66,8 +66,8 @@ type MineGrid(w : int, h : int, count : int) as me =
     let mutable flag = 0
 
     let update (item : 'a byref) data name =
-        assert(typeof<IMineGrid>.GetProperty name <> null)
-        assert(item <> data)
+        assert (typeof<IMineGrid>.GetProperty name <> null)
+        assert (item <> data)
         item <- data
         notify.Trigger(me, PropertyChangedEventArgs name)
         ()
@@ -96,10 +96,10 @@ type MineGrid(w : int, h : int, count : int) as me =
         | _ -> 0
 
     let finish n =
-        assert(n <= tile && n >= 0)
+        assert (n <= tile && n >= 0)
         tile <- tile - n
-        assert(face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
-        assert(step = MineGridStatus.Wait)
+        assert (face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
+        assert (step = MineGridStatus.Wait)
         if miss <> -1 then
             step' MineGridStatus.Over
         elif tile = count then
@@ -137,7 +137,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             | TileMark.Flag -> m <- TileMark.What; flag' (flag - 1)
             | TileMark.What -> m <- TileMark.Tile
             | _ -> ()
-            assert(face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
+            assert (face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
             ()
 
         member __.Remove(x, y) =

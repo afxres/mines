@@ -18,7 +18,7 @@ type MainWindow() as me =
 
     let ticker () =
         let t = me.Find<TextBlock> "ticker"
-        assert(t <> null)
+        assert (t <> null)
         async {
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
@@ -31,7 +31,7 @@ type MainWindow() as me =
     let notify () =
         let grid = me.DataContext :?> IMineGrid
         let tag = me.Find<TextBlock> "marker"
-        assert(tag <> null)
+        assert (tag <> null)
         tag.Text <- $"{grid.FlagCount} / {grid.MineCount}"
         ()
 
@@ -57,7 +57,7 @@ type MainWindow() as me =
         if old <> null then
             (old :?> INotifyPropertyChanged).PropertyChanged.RemoveHandler propertyChangedHandler
         let box = me.Find<Viewbox> "viewer"
-        assert(box <> null)
+        assert (box <> null)
         box.Child <- MineDisplayControl()
         notify ()
         ()
