@@ -8,13 +8,17 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-  <Grid ColumnDefinitions="* Auto">
-    <Viewbox x:Name="viewer" Grid.Column="0" Margin="16" />
-    <Grid Grid.Column="1" Width="320">
-      <StackPanel>
-        <TextBlock x:Name="marker" FontSize="24" />
-        <TextBlock x:Name="ticker" FontSize="24" />
-      </StackPanel>
+  <Grid>
+    <Grid ColumnDefinitions="* 16 Auto" Margin="16">
+      <Viewbox x:Name="viewer" Grid.Column="0" />
+      <Grid Grid.Column="2" Width="240">
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock x:Name="marker" />
+          <TextBlock x:Name="ticker" />
+          <TextBlock x:Name="banner" />
+          <Button x:Name="reopen">New Game</Button>
+        </StackPanel>
+      </Grid>
     </Grid>
   </Grid>
 </Window>
