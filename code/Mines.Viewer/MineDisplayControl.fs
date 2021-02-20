@@ -39,17 +39,19 @@ type MineDisplayControl() as me =
         ()
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
+        let update (p : PointerPointProperties) x y =
+            coordinate <- Some (x, y)
+            if p.IsLeftButtonPressed then
+                grid.Remove(x, y) |> ignore
+            elif p.IsRightButtonPressed then
+                grid.Set(x, y)
+            ()
+
         let invoke () =
             let current = e.GetCurrentPoint me
             let properties = current.Properties
             let position = current.Position
-            handle position (fun x y ->
-                coordinate <- Some (x, y)
-                if properties.IsLeftButtonPressed then
-                    grid.Remove(x, y) |> ignore
-                elif properties.IsRightButtonPressed then
-                    grid.Set(x, y)
-                ())
+            handle position (update properties)
             ()
 
         if obj.ReferenceEquals(me, e.Source) then

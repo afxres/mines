@@ -75,7 +75,7 @@ type MainWindow() as me =
     let clickHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         let b = e.Source :?> Button
         match b.Name with
-        | "reopen" -> reopen()
+        | "reopen" -> reopen ()
         | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid)
         | "remark" -> Laboratory.autoRemark (me.DataContext :?> IMineGrid)
         | _ -> ()
