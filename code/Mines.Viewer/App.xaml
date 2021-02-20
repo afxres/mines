@@ -17,6 +17,8 @@
     <Color x:Key="Mines.Drawing.Color.6">#FEA785</Color>
     <Color x:Key="Mines.Drawing.Color.7">#FF7D60</Color>
     <Color x:Key="Mines.Drawing.Color.8">#FF323C</Color>
+    <Color x:Key="Mines.Drawing.Color.Tile">#888A85</Color>
+    <Color x:Key="Mines.Drawing.Color.Back">#D3D7CF</Color>
 
     <Pen x:Key="Mines.Drawing.Mine.Pen" Brush="Black" Thickness="3" LineCap="Round" />
     <DrawingGroup x:Key="Mines.Drawing.Mine">

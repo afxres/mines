@@ -112,33 +112,36 @@ type MineDisplayControl() as me =
 
     let colors =
         let seq = seq {
-            for i = 1 to 8 do
-                let k = $"Mines.Drawing.Color.{i}"
-                let c = Application.Current.Resources.[k] :?> Color
-                yield (enum<MineData> i), (SolidColorBrush c :> ISolidColorBrush)
+            let key i = $"Mines.Drawing.Color.{i}"
+            let get i = Application.Current.Resources.[key i] :?> Color |> SolidColorBrush :> ISolidColorBrush
+            let f = get "Tile"
+            let b = get "Back"
 
-            yield MineData.Tile, Brushes.Gray
-            yield MineData.Flag, Brushes.Gray
-            yield MineData.What, Brushes.Gray
-            yield MineData.MineMiss, Brushes.Red
-            yield MineData.FlagMiss, Brushes.Red
-            yield MineData.WhatMiss, Brushes.Red
+            yield MineData.Mine, b
+            yield MineData.``0``, b
+            for i = 1 to 8 do
+                yield (enum<MineData> i), get i
+            for i in [ MineData.Tile; MineData.Flag; MineData.What ] do
+                yield i, f
+            for i in [ MineData.MineMiss; MineData.FlagMiss; MineData.WhatMiss ] do
+                yield i, Brushes.Red
         }
         seq |> Map
 
     let render (d : DrawingContext) =
         let back rect m =
-            let o = colors |> Map.tryFind m
-            let b = o |> Option.defaultValue Brushes.LightGray
-            d.DrawRectangle(b, null, rect, radius, radius)
+            d.DrawRectangle(colors.[m], null, rect, radius, radius)
+
+        let text (rect : Rect) i =
+            d.DrawText(Brushes.Black, rect.TopLeft, format.[i])
 
         let face rect m =
             match m with
             | MineData.Tile | MineData.``0`` -> ()
             | MineData.Mine | MineData.MineMiss -> mine d rect
-            | MineData.Flag | MineData.FlagMiss -> d.DrawText(Brushes.Black, rect.TopLeft, format.["!"])
-            | MineData.What | MineData.WhatMiss -> d.DrawText(Brushes.Black, rect.TopLeft, format.["?"])
-            | _ -> d.DrawText(Brushes.Black, rect.TopLeft, format.[string (int m)])
+            | MineData.Flag | MineData.FlagMiss -> text rect "!"
+            | MineData.What | MineData.WhatMiss -> text rect "?"
+            | _ -> text rect (string (int m))
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
