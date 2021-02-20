@@ -8,11 +8,17 @@ let autoRemove (grid : IMineGrid) =
         raise (ArgumentNullException(nameof(grid)))
     let w = grid.XMax
     let h = grid.YMax
-    let mutable x = 0
-    while grid.Status = MineGridStatus.Wait && x < w do
-        let mutable y = 0
-        while grid.Status = MineGridStatus.Wait && y < h do
-            grid.RemoveAll(x, y)
-            y <- y + 1
-        x <- x + 1
+
+    let remove () =
+        let mutable n = 0
+        let mutable x = 0
+        while grid.Status = MineGridStatus.Wait && x < w do
+            let mutable y = 0
+            while grid.Status = MineGridStatus.Wait && y < h do
+                n <- n + grid.RemoveAll(x, y)
+                y <- y + 1
+            x <- x + 1
+        n
+
+    while remove () <> 0 do ()
     ()

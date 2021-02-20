@@ -24,6 +24,8 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let adjacent = Algorithms.mapAdjacentIndexes w h
 
+    let calculate array item x y = adjacent x y flatten |> Seq.map (Array.get array) |> Seq.filter ((=) item) |> Seq.length
+
     let generate i =
         // 调用洗牌算法并忽略最后一个位置
         let result : byte array = Array.zeroCreate (w * h)
@@ -41,9 +43,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             for n = 0 to h - 1 do
                 let i = flatten m n
                 if (result.[i] <> Mine) then
-                    let s = adjacent m n flatten
-                    let n = s |> Seq.filter (fun x -> result.[x] = Mine) |> Seq.length
-                    result.[i] <- byte n
+                    result.[i] <- byte (calculate result Mine m n)
                 ()
 
         assert (result.[i] <> Mine)
@@ -97,7 +97,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             step' MineGridStatus.Over
         elif tile = count then
             step' MineGridStatus.Done
-        ()
+        n
 
     interface IMineGrid with
         member __.Status: MineGridStatus = step
@@ -143,7 +143,6 @@ type MineGrid(w : int, h : int, count : int) as me =
             elif step <> MineGridStatus.Wait then
                 invalidOp "Game is over!"
             remove x y |> finish
-            ()
 
         member __.RemoveAll(x, y) =
             if step <> MineGridStatus.Wait then
@@ -157,11 +156,10 @@ type MineGrid(w : int, h : int, count : int) as me =
 
             let i = flatten x y
             let n = int back.[i]
-            if face.[i] = TileMark.None && n <> 0 then
-                let flags = adjacent x y flatten |> Seq.map (Array.get face) |> Seq.filter ((=) TileMark.Flag)
-                if (flags |> Seq.length) >= n then
-                    adjacent x y drop |> Seq.sum |> finish
-            ()
+            if face.[i] = TileMark.None && n <> 0 && calculate face TileMark.Flag x y >= n then
+                adjacent x y drop |> Seq.sum |> finish
+            else
+                0
 
     interface INotifyPropertyChanged with
         [<CLIEvent>]

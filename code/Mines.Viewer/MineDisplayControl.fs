@@ -46,23 +46,24 @@ type MineDisplayControl() as me =
             handle position (fun x y ->
                 coordinate <- Some (x, y)
                 if properties.IsLeftButtonPressed then
-                    grid.Remove(x, y)
+                    grid.Remove(x, y) |> ignore
                 elif properties.IsRightButtonPressed then
                     grid.Set(x, y)
                 ())
             ()
 
-        coordinate <- None
-        match grid.Status with
-        | MineGridStatus.None | MineGridStatus.Wait -> invoke ()
-        | _ -> ()
+        if obj.ReferenceEquals(me, e.Source) then
+            coordinate <- None
+            match grid.Status with
+            | MineGridStatus.None | MineGridStatus.Wait -> invoke ()
+            | _ -> ()
         ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
-        match coordinate with
-        | Some (x, y) ->
-            grid.RemoveAll(x, y)
-        | None -> ()
+        if obj.ReferenceEquals(me, e.Source) then
+            match coordinate with
+            | Some (x, y) -> grid.RemoveAll(x, y) |> ignore
+            | None -> ()
         ())
 
     let attached () =
