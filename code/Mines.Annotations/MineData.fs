@@ -9,6 +9,7 @@ type MineData =
     | ``5`` = 5
     | ``6`` = 6
     | ``7`` = 7
+    | ``8`` = 8
     | Tile = 0x40
     | Mine = 0x41
     | Flag = 0x42

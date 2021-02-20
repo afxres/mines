@@ -107,14 +107,27 @@ type MineDisplayControl() as me =
         }
         seq |> Seq.map (fun x -> x, text x) |> Map
 
+    let colors =
+        let seq = seq {
+            for i = 1 to 8 do
+                let k = $"Mines.Drawing.Color.{i}"
+                let c = Application.Current.Resources.[k] :?> Color
+                yield (enum<MineData> i), (SolidColorBrush c :> ISolidColorBrush)
+
+            yield MineData.Tile, Brushes.Gray
+            yield MineData.Flag, Brushes.Gray
+            yield MineData.What, Brushes.Gray
+            yield MineData.MineMiss, Brushes.Red
+            yield MineData.FlagMiss, Brushes.Red
+            yield MineData.WhatMiss, Brushes.Red
+        }
+        seq |> Map
+
     let render (d : DrawingContext) =
         let back rect m =
-            let brush =
-                match m with
-                | MineData.Tile | MineData.Flag | MineData.What -> Brushes.Gray
-                | MineData.MineMiss | MineData.FlagMiss | MineData.WhatMiss -> Brushes.Red
-                | _ -> Brushes.LightGray
-            d.DrawRectangle(brush, null, rect, radius, radius)
+            let o = colors |> Map.tryFind m
+            let b = o |> Option.defaultValue Brushes.LightGray
+            d.DrawRectangle(b, null, rect, radius, radius)
 
         let face rect m =
             match m with

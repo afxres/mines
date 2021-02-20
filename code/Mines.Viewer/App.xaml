@@ -7,6 +7,17 @@
     <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
   </Application.Styles>
   <Application.Resources>
+    <!-- Gnomes mines color theme -->
+    <!-- https://github.com/GNOME/gnome-mines/blob/master/data/themes/bgcolors/theme.css -->
+    <Color x:Key="Mines.Drawing.Color.1">#DDFAC3</Color>
+    <Color x:Key="Mines.Drawing.Color.2">#ECEDBF</Color>
+    <Color x:Key="Mines.Drawing.Color.3">#EDDAB4</Color>
+    <Color x:Key="Mines.Drawing.Color.4">#EDC38A</Color>
+    <Color x:Key="Mines.Drawing.Color.5">#F7A1A2</Color>
+    <Color x:Key="Mines.Drawing.Color.6">#FEA785</Color>
+    <Color x:Key="Mines.Drawing.Color.7">#FF7D60</Color>
+    <Color x:Key="Mines.Drawing.Color.8">#FF323C</Color>
+
     <Pen x:Key="Mines.Drawing.Mine.Pen" Brush="Black" Thickness="4" LineCap="Round" />
     <DrawingGroup x:Key="Mines.Drawing.Mine">
       <GeometryDrawing Brush="Black">
