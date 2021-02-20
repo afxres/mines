@@ -7,6 +7,7 @@ open Avalonia.Interactivity
 open Avalonia.LogicalTree
 open Avalonia.Media
 open Mikodev.Mines.Annotations
+open Mikodev.Mines.Elements
 open System
 
 type MineDisplayControl() as me =
@@ -44,7 +45,7 @@ type MineDisplayControl() as me =
             if p.IsLeftButtonPressed then
                 grid.Remove(x, y) |> ignore
             elif p.IsRightButtonPressed then
-                grid.Set(x, y)
+                Operations.toggle grid x y
             ()
 
         let invoke () =

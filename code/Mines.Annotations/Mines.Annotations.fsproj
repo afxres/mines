@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="MineMark.fs" />
     <Compile Include="MineData.fs" />
     <Compile Include="MineGridStatus.fs" />
     <Compile Include="IMineGrid.fs" />

@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Include="Algorithms.fs" />
     <Compile Include="Laboratory.fs" />
+    <Compile Include="Operations.fs" />
     <Compile Include="TileMark.fs" />
     <Compile Include="MineGrid.fs" />
   </ItemGroup>

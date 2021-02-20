@@ -14,7 +14,7 @@ type IMineGrid =
 
     abstract member Get : x : int * y : int -> MineData
 
-    abstract member Set : x : int * y : int -> unit
+    abstract member Set : x : int * y : int * mark : MineMark -> unit
 
     abstract member Remove : x : int * y : int -> int
 

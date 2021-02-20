@@ -39,8 +39,7 @@ let autoRemark (grid : IMineGrid) =
                 if (n = int m) then
                     Algorithms.mapAdjacentIndexes w h x y (fun a b ->
                         if uint (grid.Get(a, b)) > 8u then
-                            while grid.Get(a, b) <> MineData.Flag do
-                                grid.Set(a, b)
+                            grid.Set(a, b, MineMark.Flag)
                         ()) |> Seq.iter id
             y <- y + 1
         x <- x + 1

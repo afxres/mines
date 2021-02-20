@@ -121,17 +121,25 @@ type MineGrid(w : int, h : int, count : int) as me =
             | TileMark.What -> if f && not m then MineData.WhatMiss else MineData.What
             | _ -> if i = miss then MineData.MineMiss elif m then MineData.Mine else enum<MineData> b
 
-        member __.Set(x, y) =
+        member __.Set(x, y, mark) =
             if step <> MineGridStatus.None && step <> MineGridStatus.Wait then
                 invalidOp "Can not operate now!"
 
+            let t =
+                match mark with
+                | MineMark.None -> TileMark.Tile
+                | MineMark.Flag -> TileMark.Flag
+                | MineMark.What -> TileMark.What
+                | _ -> invalidArg (nameof mark) "Invalid mine mark!"
+
             let i = flatten x y
-            let m = &face.[i]
-            match m with
-            | TileMark.Tile -> m <- TileMark.Flag; flag' (flag + 1)
-            | TileMark.Flag -> m <- TileMark.What; flag' (flag - 1)
-            | TileMark.What -> m <- TileMark.Tile
-            | _ -> ()
+            let s = face.[i]
+            if (s <> t) then
+                face.[i] <- t
+                if s = TileMark.Flag then
+                    flag' (flag - 1)
+                elif t = TileMark.Flag then
+                    flag' (flag + 1)
             assert (face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
             ()
 
