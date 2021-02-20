@@ -18,10 +18,10 @@
     <Color x:Key="Mines.Drawing.Color.7">#FF7D60</Color>
     <Color x:Key="Mines.Drawing.Color.8">#FF323C</Color>
 
-    <Pen x:Key="Mines.Drawing.Mine.Pen" Brush="Black" Thickness="4" LineCap="Round" />
+    <Pen x:Key="Mines.Drawing.Mine.Pen" Brush="Black" Thickness="3" LineCap="Round" />
     <DrawingGroup x:Key="Mines.Drawing.Mine">
       <GeometryDrawing Brush="Black">
-        <EllipseGeometry Rect="7,7,18,18" />
+        <EllipseGeometry Rect="8,8,16,16" />
       </GeometryDrawing>
       <GeometryDrawing Pen="{StaticResource Mines.Drawing.Mine.Pen}">
         <LineGeometry StartPoint="16,6" EndPoint="16,26" />

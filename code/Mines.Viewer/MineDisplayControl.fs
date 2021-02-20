@@ -97,9 +97,12 @@ type MineDisplayControl() as me =
         let r = Application.Current.Resources.[k] :?> DrawingGroup
         closure r
 
-    let texts =
+    let format =
         let text n =
-            FormattedText(Text = n, Typeface = Typeface.Default, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
+            let font = Typeface.Default.FontFamily
+            let face = Typeface(font, FontStyle.Normal, FontWeight.SemiBold)
+            FormattedText(Text = n, Typeface = face, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
+
         let seq = seq {
             for i in 1..7 -> string i
             yield "!"
@@ -133,9 +136,9 @@ type MineDisplayControl() as me =
             match m with
             | MineData.Tile | MineData.``0`` -> ()
             | MineData.Mine | MineData.MineMiss -> mine d rect
-            | MineData.Flag | MineData.FlagMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["!"])
-            | MineData.What | MineData.WhatMiss -> d.DrawText(Brushes.White, rect.TopLeft, texts.["?"])
-            | _ -> d.DrawText(Brushes.Black, rect.TopLeft, texts.[string (int m)])
+            | MineData.Flag | MineData.FlagMiss -> d.DrawText(Brushes.Black, rect.TopLeft, format.["!"])
+            | MineData.What | MineData.WhatMiss -> d.DrawText(Brushes.Black, rect.TopLeft, format.["?"])
+            | _ -> d.DrawText(Brushes.Black, rect.TopLeft, format.[string (int m)])
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
