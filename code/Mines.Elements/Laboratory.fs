@@ -5,7 +5,7 @@ open System
 
 let autoRemove (grid : IMineGrid) =
     if grid = null then
-        raise (ArgumentNullException(nameof(grid)))
+        raise (ArgumentNullException(nameof grid))
     let w = grid.XMax
     let h = grid.YMax
 
@@ -25,7 +25,7 @@ let autoRemove (grid : IMineGrid) =
 
 let autoRemark (grid : IMineGrid) =
     if grid = null then
-        raise (ArgumentNullException(nameof(grid)))
+        raise (ArgumentNullException(nameof grid))
     let w = grid.XMax
     let h = grid.YMax
     let mutable x = 0

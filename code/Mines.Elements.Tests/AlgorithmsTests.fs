@@ -11,7 +11,7 @@ type AlgorithmsTests() =
     }
 
     [<Theory>]
-    [<MemberData(nameof(AlgorithmsTests.``Array Data``))>]
+    [<MemberData(nameof AlgorithmsTests.``Array Data``)>]
     member __.``ShuffleInPlace`` (source : 'T array) =
         let target = Array.copy source
         Algorithms.shuffleInPlace (Span target)
@@ -32,7 +32,7 @@ type AlgorithmsTests() =
     }
 
     [<Theory>]
-    [<MemberData(nameof(AlgorithmsTests.``Index Data``))>]
+    [<MemberData(nameof AlgorithmsTests.``Index Data``)>]
     member __.``MapAdjacentIndexes`` (w : int, h : int, x : int, y : int, expected : (int * int) array) =
         let result = Algorithms.mapAdjacentIndexes w h x y (fun a b -> (a, b)) |> Seq.toArray
         Assert.Equal<(int * int)>(expected, result)
