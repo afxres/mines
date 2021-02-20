@@ -34,13 +34,9 @@ let autoRemark (grid : IMineGrid) =
         while grid.Status = MineGridStatus.Wait && y < h do
             let m = grid.Get(x, y)
             if int m >= 1 && int m <= 8 then
-                let l = Algorithms.mapAdjacentIndexes w h x y (fun a b -> grid.Get(a, b)) |> Seq.toList
-                let n = l |> Seq.filter (fun i -> uint i > 8u) |> Seq.length
-                if (n = int m) then
-                    Algorithms.mapAdjacentIndexes w h x y (fun a b ->
-                        if uint (grid.Get(a, b)) > 8u then
-                            grid.Set(a, b, MineMark.Flag)
-                        ()) |> Seq.iter id
+                let l = Algorithms.adjacent w h x y |> Seq.choose (fun (a, b) -> if grid.Get(a, b) |> int > 8 then Some (a, b) else None) |> Seq.toList
+                if (l |> List.length = int m) then
+                    for (a, b) in l do grid.Set(a, b, MineMark.Flag)
             y <- y + 1
         x <- x + 1
     ()

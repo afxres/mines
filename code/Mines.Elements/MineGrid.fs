@@ -20,11 +20,11 @@ type MineGrid(w : int, h : int, count : int) as me =
         ensure 2 SizeMax h (nameof h)
         ensure 1 (w * h - 1) count (nameof count)
 
-    let flatten = Algorithms.flattenIndex w h
+    let flatten = Algorithms.flatten w h
 
-    let adjacent = Algorithms.mapAdjacentIndexes w h
+    let adjacent f x y = Algorithms.adjacent w h x y |> Seq.map ((<||) f)
 
-    let calculate array item x y = adjacent x y flatten |> Seq.map (Array.get array) |> Seq.filter ((=) item) |> Seq.length
+    let calculate array item x y = adjacent flatten x y |> Seq.map (Array.get array) |> Seq.filter ((=) item) |> Seq.length
 
     let generate i =
         // 调用洗牌算法并忽略最后一个位置
@@ -83,7 +83,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         | TileMark.Tile ->
             m <- TileMark.None
             match back.[i] with
-            | 0uy -> adjacent x y remove |> Seq.sum |> (+) 1
+            | 0uy -> adjacent remove x y |> Seq.sum |> (+) 1
             | Mine -> miss <- i; 1
             | _ -> 1
         | _ -> 0
@@ -165,7 +165,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             let i = flatten x y
             let n = int back.[i]
             if face.[i] = TileMark.None && n <> 0 && calculate face TileMark.Flag x y >= n then
-                adjacent x y drop |> Seq.sum |> finish
+                adjacent drop x y |> Seq.sum |> finish
             else
                 0
 

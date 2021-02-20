@@ -33,7 +33,7 @@ type AlgorithmsTests() =
 
     [<Theory>]
     [<MemberData(nameof AlgorithmsTests.``Index Data``)>]
-    member __.``MapAdjacentIndexes`` (w : int, h : int, x : int, y : int, expected : (int * int) array) =
-        let result = Algorithms.mapAdjacentIndexes w h x y (fun a b -> (a, b)) |> Seq.toArray
+    member __.``Adjacent`` (w : int, h : int, x : int, y : int, expected : (int * int) array) =
+        let result = Algorithms.adjacent w h x y |> Seq.toArray
         Assert.Equal<(int * int)>(expected, result)
         ()

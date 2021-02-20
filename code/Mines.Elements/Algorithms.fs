@@ -13,13 +13,13 @@ let shuffleInPlace (array : 'T Span) =
     ()
 
 /// 展开二维数组索引到一维数组索引
-let flattenIndex (w : int) (h : int) (x : int) (y : int) =
+let flatten (w : int) (h : int) (x : int) (y : int) =
     if w < 0 || h < 0 || uint x > uint w || uint y > uint h then
         raise (ArgumentOutOfRangeException())
     y * w + x
 
-/// 映射指定位置周围的索引
-let mapAdjacentIndexes (w : int) (h : int) (x : int) (y : int) (f : int -> int -> 'T) =
+/// 指定位置周围的索引
+let adjacent (w : int) (h : int) (x : int) (y : int) =
     if w < 0 || h < 0 || uint x > uint w || uint y > uint h then
         raise (ArgumentOutOfRangeException())
 
@@ -32,5 +32,5 @@ let mapAdjacentIndexes (w : int) (h : int) (x : int) (y : int) (f : int -> int -
         for v = t to b do
             for i = l to r do
                 if v <> 0 || i <> 0 then
-                    yield f (x + i) (y + v)
+                    yield (x + i), (y + v)
     }
