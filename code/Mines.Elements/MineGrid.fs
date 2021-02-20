@@ -25,19 +25,18 @@ type MineGrid(w : int, h : int, count : int) as me =
     let adjacent = Algorithms.mapAdjacentIndexes w h
 
     let generate i =
-        // 创建一个比总数小 1 的数组, 填充 N 个雷, 然后调用洗牌算法
-        let origin : byte array = Array.zeroCreate (w * h - 1)
-        Array.fill origin 0 count Mine
-        Algorithms.shuffleInPlace origin
-        // 向数组的指定位置 (第一次翻开的位置) 插入空元素
-        let slices = [|
-            origin.[0..(i - 1)]
-            Array.singleton 0uy
-            origin.[i..]
-        |]
-        let result = Array.concat slices
-        assert (result.Length = w * h)
+        // 调用洗牌算法并忽略最后一个位置
+        let result : byte array = Array.zeroCreate (w * h)
+        let last = result.Length - 1
+        Array.fill result 0 count Mine
+        Algorithms.shuffleInPlace (result.AsSpan(0, last))
 
+        // 交换第一次点击的位置和最后一个位置
+        let x = result.[last]
+        result.[last] <- result.[i]
+        result.[i] <- x
+
+        // 计算每个位置周围的雷个数
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
                 let i = flatten m n

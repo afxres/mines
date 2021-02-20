@@ -1,6 +1,7 @@
 ﻿namespace Mikodev.Mines.Elements.Tests
 
 open Mikodev.Mines.Elements
+open System
 open Xunit
 
 type AlgorithmsTests() =
@@ -13,7 +14,7 @@ type AlgorithmsTests() =
     [<MemberData(nameof(AlgorithmsTests.``Array Data``))>]
     member __.``ShuffleInPlace`` (source : 'T array) =
         let target = Array.copy source
-        Algorithms.shuffleInPlace target
+        Algorithms.shuffleInPlace (Span target)
         Assert.Equal<'T>(Array.sort source, Array.sort target)
         ()
 
