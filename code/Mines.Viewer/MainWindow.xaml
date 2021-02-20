@@ -15,9 +15,10 @@
           <TextBlock x:Name="ticker" />
           <TextBlock x:Name="banner" />
         </StackPanel>
-        <Grid Grid.Row="2" RowDefinitions="Auto 8 Auto">
+        <Grid Grid.Row="2" RowDefinitions="Auto 8 Auto 8 Auto">
           <Button x:Name="reopen" Grid.Row="0">New Game</Button>
           <Button x:Name="remove" Grid.Row="2">Auto Remove</Button>
+          <Button x:Name="remark" Grid.Row="4">Auto Remark</Button>
         </Grid>
       </Grid>
     </Grid>

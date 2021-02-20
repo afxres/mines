@@ -76,8 +76,10 @@ type MainWindow() as me =
         let b = e.Source :?> Button
         match b.Name with
         | "reopen" -> reopen()
-        | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid); me.Renderer.AddDirty viewer.Child
+        | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid)
+        | "remark" -> Laboratory.autoRemark (me.DataContext :?> IMineGrid)
         | _ -> ()
+        me.Renderer.AddDirty viewer.Child
         ())
 
     let opened () =
