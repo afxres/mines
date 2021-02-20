@@ -75,12 +75,6 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let flag' x = update &flag x "FlagCount"
 
-    let validate () =
-        match step with
-        | MineGridStatus.Over | MineGridStatus.Done -> invalidOp "Game is over!"
-        | _ -> ()
-        ()
-
     // 递归翻开周围方块
     let rec remove x y =
         let i = flatten x y
@@ -128,7 +122,9 @@ type MineGrid(w : int, h : int, count : int) as me =
             | _ -> if i = miss then MineData.MineMiss elif m then MineData.Mine else enum<MineData> b
 
         member __.Set(x, y) =
-            validate()
+            if step <> MineGridStatus.None && step <> MineGridStatus.Wait then
+                invalidOp "Can not operate now!"
+
             let i = flatten x y
             let m = &face.[i]
             match m with
@@ -140,17 +136,18 @@ type MineGrid(w : int, h : int, count : int) as me =
             ()
 
         member __.Remove(x, y) =
-            validate()
             let i = flatten x y
-            // 第一次点击时生成地图
-            if (back |> isNull) then
+            if step = MineGridStatus.None then
                 back <- generate i
                 step' MineGridStatus.Wait
+            elif step <> MineGridStatus.Wait then
+                invalidOp "Game is over!"
             remove x y |> finish
             ()
 
         member __.RemoveAll(x, y) =
-            validate()
+            if step <> MineGridStatus.Wait then
+                invalidOp "Can not operate now!"
 
             let drop a b =
                 let i = flatten a b

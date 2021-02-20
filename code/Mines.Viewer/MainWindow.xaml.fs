@@ -15,9 +15,9 @@ type MainWindow() as me =
 
     do AvaloniaXamlLoader.Load me
 
-    let button = me.Find<Button> "reopen"
-
     let banner = me.Find<TextBlock> "banner"
+
+    let viewer = me.Find<Viewbox> "viewer"
 
     let stopwatch = Stopwatch()
 
@@ -62,8 +62,7 @@ type MainWindow() as me =
         me.DataContext <- g
         if o <> null then
             (o :?> INotifyPropertyChanged).PropertyChanged.RemoveHandler propertyChangedHandler
-        let v = me.Find<Viewbox> "viewer"
-        v.Child <- MineDisplayControl()
+        viewer.Child <- MineDisplayControl()
         marker ()
         ()
 
@@ -73,12 +72,16 @@ type MainWindow() as me =
         banner.Text <- String.Empty
         ()
 
-    let clickHandler = EventHandler<RoutedEventArgs>(fun _ _ ->
-        reopen ()
+    let clickHandler = EventHandler<RoutedEventArgs>(fun _ e ->
+        let b = e.Source :?> Button
+        match b.Name with
+        | "reopen" -> reopen()
+        | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid); me.Renderer.AddDirty viewer.Child
+        | _ -> ()
         ())
 
     let opened () =
-        button.Click.AddHandler clickHandler
+        me.AddHandler(Button.ClickEvent, clickHandler)
         ticker () |> Async.StartImmediate
         reopen ()
         ()
@@ -86,7 +89,7 @@ type MainWindow() as me =
     let closed () =
         source.Cancel()
         source.Dispose()
-        button.Click.RemoveHandler clickHandler
+        me.RemoveHandler(Button.ClickEvent, clickHandler)
         ()
 
     override __.OnOpened e =
