@@ -25,9 +25,9 @@ type MineDisplayControl() as me =
 
     let size = 32.0
 
-    let spacing = 3.0
+    let spacing = 2.8
 
-    let radius = 3.0
+    let radius = 1.4
 
     let handle (p : Point) (f : int -> int -> unit) =
         if me.Bounds.Contains p then
@@ -104,7 +104,7 @@ type MineDisplayControl() as me =
     let format =
         let text n =
             let font = Typeface.Default.FontFamily
-            let face = Typeface(font, FontStyle.Normal, FontWeight.SemiBold)
+            let face = Typeface(font, FontStyle.Normal, FontWeight.Bold)
             FormattedText(Text = n, Typeface = face, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
 
         let seq = seq {
@@ -117,27 +117,27 @@ type MineDisplayControl() as me =
     let colors =
         let seq = seq {
             let key i = $"Mines.Drawing.Color.{i}"
-            let get i = Application.Current.Resources.[key i] :?> Color |> SolidColorBrush :> ISolidColorBrush
-            let f = get "Tile"
-            let b = get "Back"
+            let get i = Application.Current.Resources.[key i] :?> ISolidColorBrush
 
-            yield MineData.Mine, b
-            yield MineData.``0``, b
+            yield MineData.Mine, get "Mine"
+            yield MineData.``0``, get "Back"
             for i = 1 to 8 do
                 yield (enum<MineData> i), get i
             for i in [ MineData.Tile; MineData.Flag; MineData.What ] do
-                yield i, f
+                yield i, get "Tile"
             for i in [ MineData.MineMiss; MineData.FlagMiss; MineData.WhatMiss ] do
-                yield i, Brushes.Red
+                yield i, get "Miss"
         }
         seq |> Map
 
     let render (d : DrawingContext) =
+        let font = Application.Current.Resources.["Mines.Drawing.Color.Font"] :?> IBrush
+
         let back rect m =
             d.DrawRectangle(colors.[m], null, rect, radius, radius)
 
         let text (rect : Rect) i =
-            d.DrawText(Brushes.Black, rect.TopLeft, format.[i])
+            d.DrawText(font, rect.TopLeft, format.[i])
 
         let face rect m =
             match m with
