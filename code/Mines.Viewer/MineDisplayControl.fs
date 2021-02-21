@@ -64,7 +64,7 @@ type MineDisplayControl() as me =
         ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
-        if obj.ReferenceEquals(me, e.Source) then
+        if obj.ReferenceEquals(me, e.Source) && grid.Status = MineGridStatus.Wait then
             match coordinate with
             | Some (x, y) -> grid.RemoveAll(x, y) |> ignore
             | None -> ()
