@@ -108,16 +108,18 @@ type MineDisplayControl() as me =
 
     let what = wrap "What"
 
-    let format =
-        let text n =
-            let font = Typeface.Default.FontFamily
-            let face = Typeface(font, FontStyle.Normal, FontWeight.Bold)
-            FormattedText(Text = n, Typeface = face, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
-
+    let text =
+        let t = Typeface(Typeface.Default.FontFamily, FontStyle.Normal, FontWeight.Bold)
+        let f n = FormattedText(Text = string n, Typeface = t, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
         let seq = seq {
-            for i in 1..7 -> string i
+            for i in 1..8 -> enum<MineData> i, f i
         }
-        seq |> Seq.map (fun x -> x, text x) |> Map
+        let b = Application.Current.Resources.["Mines.Drawing.Color.Font"] :?> IBrush
+        let m = seq |> Map
+
+        let closure (d : DrawingContext) (rect : Rect) i =
+            d.DrawText(b, rect.TopLeft, m.[i])
+        closure
 
     let colors =
         let seq = seq {
@@ -136,13 +138,8 @@ type MineDisplayControl() as me =
         seq |> Map
 
     let render (d : DrawingContext) =
-        let font = Application.Current.Resources.["Mines.Drawing.Color.Font"] :?> IBrush
-
         let back rect m =
             d.DrawRectangle(colors.[m], null, rect, radius, radius)
-
-        let text (rect : Rect) i =
-            d.DrawText(font, rect.TopLeft, format.[i])
 
         let face rect m =
             match m with
@@ -150,7 +147,7 @@ type MineDisplayControl() as me =
             | MineData.Mine | MineData.MineMiss -> mine d rect
             | MineData.Flag | MineData.FlagMiss -> flag d rect
             | MineData.What | MineData.WhatMiss -> what d rect
-            | _ -> text rect (string (int m))
+            | _ -> text d rect m
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
