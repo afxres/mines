@@ -110,16 +110,24 @@ type MineDisplayControl() as me =
 
     let text =
         let t = Typeface(Typeface.Default.FontFamily, FontStyle.Normal, FontWeight.Bold)
-        let f n = FormattedText(Text = string n, Typeface = t, FontSize = 22.0, TextAlignment = TextAlignment.Center, Constraint = Size(size, size))
-        let seq = seq {
-            for i in 1..8 -> enum<MineData> i, f i
-        }
+        let f n = FormattedText(Text = string n, Typeface = t, FontSize = 22.0)
         let b = Application.Current.Resources.["Mines.Drawing.Color.Font"] :?> IBrush
-        let m = seq |> Map
 
-        let closure (d : DrawingContext) (rect : Rect) i =
-            d.DrawText(b, rect.TopLeft, m.[i])
-        closure
+        let seq = seq {
+            for i = 0 to 8 do
+                let v = f i
+                let s = v.Bounds.Size
+                let x = (size - s.Width) / 2.0
+                let y = (size - s.Height) / 2.0
+                let closure (d : DrawingContext) (rect : Rect) =
+                    d.DrawText(b, Point(rect.X + x, rect.Y + y), v)
+                yield enum<MineData> i, closure
+        }
+
+        let m = seq |> Map
+        let invoke (d : DrawingContext) (rect : Rect) e =
+            m.[e] d rect
+        invoke
 
     let colors =
         let seq = seq {
