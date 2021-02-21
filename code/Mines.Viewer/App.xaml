@@ -23,26 +23,24 @@
     <SolidColorBrush x:Key="Mines.Drawing.Color.Miss">#CC0000</SolidColorBrush>
     <SolidColorBrush x:Key="Mines.Drawing.Color.Tile">#BABDB6</SolidColorBrush>
 
-    <Pen x:Key="Mines.Drawing.Mine.Pen" Brush="{StaticResource Mines.Drawing.Color.Font}" Thickness="2.8" LineCap="Round" />
-    <DrawingGroup x:Key="Mines.Drawing.Mine">
-      <GeometryDrawing Brush="{StaticResource Mines.Drawing.Color.Font}">
-        <EllipseGeometry Rect="9,9,14,14" />
-      </GeometryDrawing>
-      <GeometryDrawing Pen="{StaticResource Mines.Drawing.Mine.Pen}">
-        <LineGeometry StartPoint="16,7" EndPoint="16,25" />
-      </GeometryDrawing>
-      <GeometryDrawing Pen="{StaticResource Mines.Drawing.Mine.Pen}">
-        <LineGeometry StartPoint="7,16" EndPoint="25,16" />
-      </GeometryDrawing>
-      <GeometryDrawing Pen="{StaticResource Mines.Drawing.Mine.Pen}">
-        <LineGeometry StartPoint="9.636,9.636" EndPoint="22.364,22.364" />
-      </GeometryDrawing>
-      <GeometryDrawing Pen="{StaticResource Mines.Drawing.Mine.Pen}">
-        <LineGeometry StartPoint="9.636,22.364" EndPoint="22.364,9.636" />
-      </GeometryDrawing>
-    </DrawingGroup>
-    <Path x:Key="Mines.Drawing.Flag" Fill="{StaticResource Mines.Drawing.Color.Font}" Width="32" Height="32">
-      <Path.Data>M8,5 L11,5 11,6 25,12 11,18 11,27 8,27Z</Path.Data>
+    <Path x:Key="Mines.Drawing.Flag"
+          Fill="{StaticResource Mines.Drawing.Color.Font}"
+          Width="32" Height="32">
+      <Path.Data>M8,6 L11,6 11,7 24,12 11,18 11,26 8,26Z</Path.Data>
+    </Path>
+    <Path x:Key="Mines.Drawing.Mine"
+          Fill="{StaticResource Mines.Drawing.Color.Font}"
+          Stroke="{StaticResource Mines.Drawing.Color.Font}"
+          StrokeThickness="2.8"
+          StrokeLineCap="Round"
+          Width="32" Height="32">
+      <Path.Data>
+        M16,10.5 A5.5,5.5 180 1 1 16,21.5 A5.5,5.5 180 1 1 16,10.5Z
+        M16,7 L16,25
+        M7,16 L25,16
+        M9.636,9.636 L22.364,22.364
+        M9.636,22.364 L22.364,9.636
+      </Path.Data>
     </Path>
   </Application.Resources>
 </Application>

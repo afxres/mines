@@ -89,23 +89,22 @@ type MineDisplayControl() as me =
         grid <- null
         ()
 
-    let wrap f (d : DrawingContext) (rect : Rect) =
-        let c = d.CurrentTransform
-        let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
-        let s = d.PushSetTransform m
-        f d
-        s.Dispose()
-        ()
+    let wrap key =
+        let closure (p : Path) (d : DrawingContext) (rect : Rect) =
+            let c = d.CurrentTransform
+            let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
+            let s = d.PushSetTransform m
+            p.Render d
+            s.Dispose()
+            ()
 
-    let mine =
-        let k = "Mines.Drawing.Mine"
-        let r = Application.Current.Resources.[k] :?> DrawingGroup
-        wrap r.Draw
+        let item = $"Mines.Drawing.{key}"
+        let path = Application.Current.Resources.[item] :?> Path
+        closure path
 
-    let flag =
-        let k = "Mines.Drawing.Flag"
-        let r = Application.Current.Resources.[k] :?> Path
-        wrap r.Render
+    let mine = wrap "Mine"
+
+    let flag = wrap "Flag"
 
     let format =
         let text n =
