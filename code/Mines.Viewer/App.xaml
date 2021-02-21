@@ -53,5 +53,14 @@
         M9.636,22.364 L22.364,9.636
       </Path.Data>
     </Path>
+    <Path x:Key="Mines.Drawing.Time"
+          Fill="{StaticResource Mines.Drawing.Color.Font}"
+          Width="32" Height="32">
+      <Path.Data>
+        M16,6 A10,10 180 1 1 16,26 A8,8 180 1 1 16,6
+        M16,9 A7,7 180 1 1 16,23 A7,7 180 1 1 16,9
+        M15,10 L15,17 22,17 22,15 17,15 17,10
+      </Path.Data>
+    </Path>
   </Application.Resources>
 </Application>

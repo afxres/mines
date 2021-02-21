@@ -9,11 +9,17 @@
   <Grid>
     <Grid ColumnDefinitions="* 16 Auto" Margin="16" VerticalAlignment="Center">
       <Viewbox x:Name="viewer" Grid.Column="0" />
-      <Grid Grid.Column="2" RowDefinitions="Auto * Auto" Width="240">
+      <Grid Grid.Column="2" RowDefinitions="Auto * Auto" Width="220">
         <StackPanel Grid.Row="0">
-          <TextBlock x:Name="marker" />
-          <TextBlock x:Name="ticker" />
-          <TextBlock x:Name="banner" />
+          <StackPanel>
+            <Viewbox Width="64" Height="64" Child="{StaticResource Mines.Drawing.Flag}" />
+            <TextBlock x:Name="marker" HorizontalAlignment="Center" />
+          </StackPanel>
+          <StackPanel>
+            <Viewbox Width="64" Height="64" Child="{StaticResource Mines.Drawing.Time}" />
+            <TextBlock x:Name="ticker" HorizontalAlignment="Center" />
+          </StackPanel>
+          <TextBlock x:Name="banner" HorizontalAlignment="Center" />
         </StackPanel>
         <Grid Grid.Row="2" RowDefinitions="Auto 8 Auto 8 Auto">
           <Button x:Name="reopen" Grid.Row="0">New Game</Button>
