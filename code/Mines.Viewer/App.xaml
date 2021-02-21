@@ -26,7 +26,18 @@
     <Path x:Key="Mines.Drawing.Flag"
           Fill="{StaticResource Mines.Drawing.Color.Font}"
           Width="32" Height="32">
-      <Path.Data>M8,6 L11,6 11,7 24,12 11,18 11,26 8,26Z</Path.Data>
+      <Path.Data>
+        M8,6 L11,6 11,7 24,12.5 11,18 11,26 8,26Z
+      </Path.Data>
+    </Path>
+    <!-- Don't know how to draw a question mark ... -->
+    <Path x:Key="Mines.Drawing.What"
+          Fill="{StaticResource Mines.Drawing.Color.Font}"
+          Width="32" Height="32">
+      <Path.Data>
+        M8,6 L11,6 11,7 24,12.5 11,18 11,26 8,26Z
+        M11,10 L11,15 16.9,12.5Z
+      </Path.Data>
     </Path>
     <Path x:Key="Mines.Drawing.Mine"
           Fill="{StaticResource Mines.Drawing.Color.Font}"

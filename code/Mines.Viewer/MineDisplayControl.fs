@@ -106,6 +106,8 @@ type MineDisplayControl() as me =
 
     let flag = wrap "Flag"
 
+    let what = wrap "What"
+
     let format =
         let text n =
             let font = Typeface.Default.FontFamily
@@ -114,7 +116,6 @@ type MineDisplayControl() as me =
 
         let seq = seq {
             for i in 1..7 -> string i
-            yield "?"
         }
         seq |> Seq.map (fun x -> x, text x) |> Map
 
@@ -148,7 +149,7 @@ type MineDisplayControl() as me =
             | MineData.Tile | MineData.``0`` -> ()
             | MineData.Mine | MineData.MineMiss -> mine d rect
             | MineData.Flag | MineData.FlagMiss -> flag d rect
-            | MineData.What | MineData.WhatMiss -> text rect "?"
+            | MineData.What | MineData.WhatMiss -> what d rect
             | _ -> text rect (string (int m))
 
         for m = 0 to w - 1 do
