@@ -41,5 +41,8 @@
         <LineGeometry StartPoint="9.636,22.364" EndPoint="22.364,9.636" />
       </GeometryDrawing>
     </DrawingGroup>
+    <Path x:Key="Mines.Drawing.Flag" Fill="{StaticResource Mines.Drawing.Color.Font}" Width="32" Height="32">
+      <Path.Data>M8,5 L11,5 11,6 25,12 11,18 11,27 8,27Z</Path.Data>
+    </Path>
   </Application.Resources>
 </Application>

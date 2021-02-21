@@ -2,6 +2,7 @@
 
 open Avalonia
 open Avalonia.Controls
+open Avalonia.Controls.Shapes
 open Avalonia.Input
 open Avalonia.Interactivity
 open Avalonia.LogicalTree
@@ -88,18 +89,23 @@ type MineDisplayControl() as me =
         grid <- null
         ()
 
-    let mine =
-        let closure (r : DrawingGroup) (d : DrawingContext) (rect : Rect) =
-            let c = d.CurrentTransform
-            let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
-            let s = d.PushSetTransform m
-            r.Draw d
-            s.Dispose()
-            ()
+    let wrap f (d : DrawingContext) (rect : Rect) =
+        let c = d.CurrentTransform
+        let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
+        let s = d.PushSetTransform m
+        f d
+        s.Dispose()
+        ()
 
+    let mine =
         let k = "Mines.Drawing.Mine"
         let r = Application.Current.Resources.[k] :?> DrawingGroup
-        closure r
+        wrap r.Draw
+
+    let flag =
+        let k = "Mines.Drawing.Flag"
+        let r = Application.Current.Resources.[k] :?> Path
+        wrap r.Render
 
     let format =
         let text n =
@@ -109,7 +115,6 @@ type MineDisplayControl() as me =
 
         let seq = seq {
             for i in 1..7 -> string i
-            yield "!"
             yield "?"
         }
         seq |> Seq.map (fun x -> x, text x) |> Map
@@ -143,7 +148,7 @@ type MineDisplayControl() as me =
             match m with
             | MineData.Tile | MineData.``0`` -> ()
             | MineData.Mine | MineData.MineMiss -> mine d rect
-            | MineData.Flag | MineData.FlagMiss -> text rect "!"
+            | MineData.Flag | MineData.FlagMiss -> flag d rect
             | MineData.What | MineData.WhatMiss -> text rect "?"
             | _ -> text rect (string (int m))
 
