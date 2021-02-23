@@ -6,7 +6,6 @@ open Avalonia.Markup.Xaml
 open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
 open System
-open System.ComponentModel
 open System.Diagnostics
 open System.Threading
 
@@ -42,27 +41,21 @@ type MainWindow() as me =
             ()
         }
 
-    let status () =
+    let statusChangedHandler = EventHandler(fun _ _ ->
         let g = me.DataContext :?> IMineGrid
         match g.Status with
         | MineGridStatus.Wait -> stopwatch.Start()
         | MineGridStatus.Over -> stopwatch.Stop(); banner.Text <- "Game Over!"
         | MineGridStatus.Done -> stopwatch.Stop(); banner.Text <- "Nice Done!"
-        | _ -> Debug.Fail "What's wrong?"
-        ()
-
-    let propertyChangedHandler = PropertyChangedEventHandler(fun _ e ->
-        match e.PropertyName with
-        | "Status" -> status ()
         | _ -> ()
         ())
 
     let update (g : IMineGrid) =
-        let o = me.DataContext
-        (g :?> INotifyPropertyChanged).PropertyChanged.AddHandler propertyChangedHandler
+        let o = me.DataContext :?> IMineGrid
         me.DataContext <- g
+        g.StatusChanged.AddHandler statusChangedHandler
         if o <> null then
-            (o :?> INotifyPropertyChanged).PropertyChanged.RemoveHandler propertyChangedHandler
+            o.StatusChanged.RemoveHandler statusChangedHandler
         viewer.Child <- MineDisplayControl(me :> TopLevel, g)
         ()
 
