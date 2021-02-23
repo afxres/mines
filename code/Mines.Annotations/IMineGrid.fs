@@ -1,7 +1,12 @@
 ﻿namespace Mikodev.Mines.Annotations
 
+open System
+
 [<AllowNullLiteral>]
 type IMineGrid =
+    [<CLIEvent>]
+    abstract member StatusChanged : IEvent<EventHandler, EventArgs>
+
     abstract member Status : MineGridStatus
 
     abstract member XMax : int

@@ -51,6 +51,8 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let notify = Event<_, _>()
 
+    let status = Event<_, _>()
+
     let face : TileMark array = Array.create (w * h) TileMark.Tile
 
     let mutable step = MineGridStatus.None
@@ -69,7 +71,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         notify.Trigger(me, PropertyChangedEventArgs name)
         ()
 
-    let step' x = update &step x "Status"
+    let step' x = update &step x "Status"; status.Trigger(me, EventArgs.Empty)
 
     let flag' x = update &flag x "FlagCount"
 
@@ -97,6 +99,9 @@ type MineGrid(w : int, h : int, count : int) as me =
         n
 
     interface IMineGrid with
+        [<CLIEvent>]
+        member __.StatusChanged = status.Publish
+
         member __.Status: MineGridStatus = step
 
         member __.XMax = w
