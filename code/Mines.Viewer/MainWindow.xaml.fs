@@ -62,7 +62,7 @@ type MainWindow() as me =
         me.DataContext <- g
         if o <> null then
             (o :?> INotifyPropertyChanged).PropertyChanged.RemoveHandler propertyChangedHandler
-        viewer.Child <- MineDisplayControl()
+        viewer.Child <- MineDisplayControl(me :> TopLevel, g)
         marker ()
         ()
 

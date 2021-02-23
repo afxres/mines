@@ -5,13 +5,12 @@ open Avalonia.Controls
 open Avalonia.Controls.Shapes
 open Avalonia.Input
 open Avalonia.Interactivity
-open Avalonia.LogicalTree
 open Avalonia.Media
 open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
 open System
 
-type MineDisplayControl() as me =
+type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
     inherit Control()
 
     let out = struct (-1, -1)
@@ -20,32 +19,28 @@ type MineDisplayControl() as me =
 
     let mutable down : struct (int * int) = out
 
-    let mutable top : TopLevel = null
+    let w = grid.XMax
 
-    let mutable grid : IMineGrid = null
-
-    let mutable w : int = 0
-
-    let mutable h : int = 0
+    let h = grid.YMax
 
     let size = 32.0
 
-    let spacing = 2.8
+    let margin = 2.8
 
     let radius = 1.4
 
-    let locate (data : byref<_>) (e : PointerEventArgs) =
-        data <- out
+    let locate (pose : byref<_>) (e : PointerEventArgs) =
+        pose <- out
         if obj.ReferenceEquals(me, e.Source) then
             match grid.Status with
             | MineGridStatus.None | MineGridStatus.Wait ->
                 let p = e.GetCurrentPoint(me).Position
                 if me.Bounds.Contains p then
-                    let m = Math.Floor(p.X / (size + spacing)) |> int
-                    let n = Math.Floor(p.Y / (size + spacing)) |> int
-                    let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
+                    let m = Math.Floor(p.X / (size + margin)) |> int
+                    let n = Math.Floor(p.Y / (size + margin)) |> int
+                    let rect = Rect(double m * (size + margin), double n * (size + margin), size, size)
                     if rect.Contains(p) then
-                        data <- struct (m, n)
+                        pose <- struct (m, n)
             | _ -> ()
         ()
 
@@ -72,13 +67,9 @@ type MineDisplayControl() as me =
         ())
 
     let attached () =
-        grid <- me.DataContext :?> IMineGrid
-        w <- grid.XMax
-        h <- grid.YMax
-        me.Width <- double w * size + double (w - 1) * spacing
-        me.Height <- double h * size + double (h - 1) * spacing
+        me.Width <- double w * size + double (w - 1) * margin
+        me.Height <- double h * size + double (h - 1) * margin
 
-        top <- me.FindLogicalAncestorOfType<TopLevel>()
         top.DoubleTapped.AddHandler doubleTappedHandler
         top.PointerPressed.AddHandler pointerPressedHandler
         top.PointerReleased.AddHandler pointerReleasedHandler
@@ -88,8 +79,6 @@ type MineDisplayControl() as me =
         top.DoubleTapped.RemoveHandler doubleTappedHandler
         top.PointerPressed.RemoveHandler pointerPressedHandler
         top.PointerReleased.RemoveHandler pointerReleasedHandler
-        top <- null
-        grid <- null
         ()
 
     let wrap key =
@@ -162,7 +151,7 @@ type MineDisplayControl() as me =
 
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
-                let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
+                let rect = Rect(double m * (size + margin), double n * (size + margin), size, size)
                 let mark = grid.Get(m, n)
                 back rect mark
                 face rect mark
