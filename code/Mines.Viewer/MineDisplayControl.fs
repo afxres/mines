@@ -53,10 +53,10 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
         if up <> out && up = down then
             let struct (x, y) = up
             let p = e.GetCurrentPoint(me).Properties
-            if (p.PointerUpdateKind = PointerUpdateKind.LeftButtonReleased) then
-                grid.Remove(x, y) |> ignore
-            elif (p.PointerUpdateKind = PointerUpdateKind.RightButtonReleased) then
-                Operations.toggle grid x y
+            match p.PointerUpdateKind with
+            | PointerUpdateKind.LeftButtonReleased -> grid.Remove(x, y) |> ignore
+            | PointerUpdateKind.RightButtonReleased -> Operations.toggle grid x y
+            | _ -> ()
             top.Renderer.AddDirty me
         ())
 
