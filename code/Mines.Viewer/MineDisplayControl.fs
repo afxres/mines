@@ -14,7 +14,11 @@ open System
 type MineDisplayControl() as me =
     inherit Control()
 
-    let mutable coordinate : (int * int) option = None
+    let out = struct (-1, -1)
+
+    let mutable up : struct (int * int) = out
+
+    let mutable down : struct (int * int) = out
 
     let mutable top : TopLevel = null
 
@@ -30,44 +34,41 @@ type MineDisplayControl() as me =
 
     let radius = 1.4
 
-    let handle (p : Point) (f : int -> int -> unit) =
-        if me.Bounds.Contains p then
-            let m = Math.Floor(p.X / (size + spacing)) |> int
-            let n = Math.Floor(p.Y / (size + spacing)) |> int
-            let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
-            if rect.Contains(p) then
-                f m n
-                top.Renderer.AddDirty me
+    let locate (data : byref<_>) (e : PointerEventArgs) =
+        data <- out
+        if obj.ReferenceEquals(me, e.Source) then
+            match grid.Status with
+            | MineGridStatus.None | MineGridStatus.Wait ->
+                let p = e.GetCurrentPoint(me).Position
+                if me.Bounds.Contains p then
+                    let m = Math.Floor(p.X / (size + spacing)) |> int
+                    let n = Math.Floor(p.Y / (size + spacing)) |> int
+                    let rect = Rect(double m * (size + spacing), double n * (size + spacing), size, size)
+                    if rect.Contains(p) then
+                        data <- struct (m, n)
+            | _ -> ()
         ()
 
     let pointerPressedHandler = EventHandler<PointerPressedEventArgs>(fun _ e ->
-        let update (p : PointerPointProperties) x y =
-            coordinate <- Some (x, y)
-            if p.IsLeftButtonPressed then
+        locate &down (e :> _)
+        ())
+
+    let pointerReleasedHandler = EventHandler<PointerReleasedEventArgs>(fun _ e ->
+        locate &up (e :> _)
+        if up <> out && up = down then
+            let struct (x, y) = up
+            let p = e.GetCurrentPoint(me).Properties
+            if (p.PointerUpdateKind = PointerUpdateKind.LeftButtonReleased) then
                 grid.Remove(x, y) |> ignore
-            elif p.IsRightButtonPressed then
+            elif (p.PointerUpdateKind = PointerUpdateKind.RightButtonReleased) then
                 Operations.toggle grid x y
-            ()
-
-        let invoke () =
-            let current = e.GetCurrentPoint me
-            let properties = current.Properties
-            let position = current.Position
-            handle position (update properties)
-            ()
-
-        if obj.ReferenceEquals(me, e.Source) then
-            coordinate <- None
-            match grid.Status with
-            | MineGridStatus.None | MineGridStatus.Wait -> invoke ()
-            | _ -> ()
+            top.Renderer.AddDirty me
         ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
-        if obj.ReferenceEquals(me, e.Source) && grid.Status = MineGridStatus.Wait then
-            match coordinate with
-            | Some (x, y) -> grid.RemoveAll(x, y) |> ignore
-            | None -> ()
+        if up <> out && up = down then
+            let struct (x, y) = up
+            grid.RemoveAll(x, y) |> ignore
         ())
 
     let attached () =
@@ -80,11 +81,13 @@ type MineDisplayControl() as me =
         top <- me.FindLogicalAncestorOfType<TopLevel>()
         top.DoubleTapped.AddHandler doubleTappedHandler
         top.PointerPressed.AddHandler pointerPressedHandler
+        top.PointerReleased.AddHandler pointerReleasedHandler
         ()
 
     let detached () =
         top.DoubleTapped.RemoveHandler doubleTappedHandler
         top.PointerPressed.RemoveHandler pointerPressedHandler
+        top.PointerReleased.RemoveHandler pointerReleasedHandler
         top <- null
         grid <- null
         ()
