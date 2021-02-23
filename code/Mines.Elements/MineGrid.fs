@@ -9,7 +9,7 @@ type MineGrid(w : int, h : int, count : int) as me =
     let Mine : byte = 0xFFuy
 
     [<Literal>]
-    let SizeMax = 128
+    let SizeMax = 1024
 
     let ensure min max value name =
         if value < min || value > max then
@@ -47,7 +47,6 @@ type MineGrid(w : int, h : int, count : int) as me =
                 ()
 
         assert (result.[i] <> Mine)
-        assert (result |> Seq.filter ((=) Mine) |> Seq.length = count)
         result
 
     let notify = Event<_, _>()
@@ -65,7 +64,6 @@ type MineGrid(w : int, h : int, count : int) as me =
     let mutable flag = 0
 
     let update (item : 'a byref) data name =
-        assert (typeof<IMineGrid>.GetProperty name <> null)
         assert (item <> data)
         item <- data
         notify.Trigger(me, PropertyChangedEventArgs name)
@@ -91,7 +89,6 @@ type MineGrid(w : int, h : int, count : int) as me =
     let finish n =
         assert (n <= tile && n >= 0)
         tile <- tile - n
-        assert (face |> Seq.filter ((<>) TileMark.None) |> Seq.length = tile)
         assert (step = MineGridStatus.Wait)
         if miss <> -1 then
             step' MineGridStatus.Over
@@ -140,7 +137,6 @@ type MineGrid(w : int, h : int, count : int) as me =
                     flag' (flag - 1)
                 elif t = TileMark.Flag then
                     flag' (flag + 1)
-            assert (face |> Seq.filter ((=) TileMark.Flag) |> Seq.length = flag)
             ()
 
         member __.Remove(x, y) =
