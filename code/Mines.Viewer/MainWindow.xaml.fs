@@ -25,20 +25,22 @@ type MainWindow() as me =
 
     let ticker () =
         let t = me.Find<TextBlock> "ticker"
+        let f = me.Find<TextBlock> "marker"
         let i = TimeSpan.FromMilliseconds (double 33)
+        let mutable p = -1
         async {
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
                 t.Text <- e.ToString @"d'.'hh':'mm':'ss'.'ff"
+                let g = me.DataContext :?> IMineGrid
+                if (g <> null) then
+                    let q = g.FlagCount
+                    if (p <> q) then
+                        p <- q
+                        f.Text <- $"{p} / {g.MineCount}"
                 do! Async.Sleep i
             ()
         }
-
-    let marker () =
-        let g = me.DataContext :?> IMineGrid
-        let t = me.Find<TextBlock> "marker"
-        t.Text <- $"{g.FlagCount} / {g.MineCount}"
-        ()
 
     let status () =
         let g = me.DataContext :?> IMineGrid
@@ -52,7 +54,6 @@ type MainWindow() as me =
     let propertyChangedHandler = PropertyChangedEventHandler(fun _ e ->
         match e.PropertyName with
         | "Status" -> status ()
-        | "FlagCount" -> marker ()
         | _ -> ()
         ())
 
@@ -63,7 +64,6 @@ type MainWindow() as me =
         if o <> null then
             (o :?> INotifyPropertyChanged).PropertyChanged.RemoveHandler propertyChangedHandler
         viewer.Child <- MineDisplayControl(me :> TopLevel, g)
-        marker ()
         ()
 
     let reopen () =
