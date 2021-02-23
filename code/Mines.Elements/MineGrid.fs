@@ -2,7 +2,6 @@
 
 open Mikodev.Mines.Annotations
 open System
-open System.ComponentModel
 
 type MineGrid(w : int, h : int, count : int) as me =
     [<Literal>]
@@ -49,8 +48,6 @@ type MineGrid(w : int, h : int, count : int) as me =
         assert (result.[i] <> Mine)
         result
 
-    let notify = Event<_, _>()
-
     let status = Event<_, _>()
 
     let face : TileMark array = Array.create (w * h) TileMark.Tile
@@ -65,15 +62,7 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let mutable flag = 0
 
-    let update (item : 'a byref) data name =
-        assert (item <> data)
-        item <- data
-        notify.Trigger(me, PropertyChangedEventArgs name)
-        ()
-
-    let step' x = update &step x "Status"; status.Trigger(me, EventArgs.Empty)
-
-    let flag' x = update &flag x "FlagCount"
+    let update x = step <- x; status.Trigger(me, EventArgs.Empty)
 
     // 递归翻开周围方块
     let rec remove x y =
@@ -93,9 +82,9 @@ type MineGrid(w : int, h : int, count : int) as me =
         tile <- tile - n
         assert (step = MineGridStatus.Wait)
         if miss <> -1 then
-            step' MineGridStatus.Over
+            update MineGridStatus.Over
         elif tile = count then
-            step' MineGridStatus.Done
+            update MineGridStatus.Done
         n
 
     interface IMineGrid with
@@ -139,16 +128,16 @@ type MineGrid(w : int, h : int, count : int) as me =
             if (s <> t) then
                 face.[i] <- t
                 if s = TileMark.Flag then
-                    flag' (flag - 1)
+                    flag <- flag - 1
                 elif t = TileMark.Flag then
-                    flag' (flag + 1)
+                    flag <- flag + 1
             ()
 
         member __.Remove(x, y) =
             let i = flatten x y
             if step = MineGridStatus.None then
                 back <- generate i
-                step' MineGridStatus.Wait
+                update MineGridStatus.Wait
             elif step <> MineGridStatus.Wait then
                 invalidOp "Game is over!"
             remove x y |> finish
@@ -169,7 +158,3 @@ type MineGrid(w : int, h : int, count : int) as me =
                 adjacent drop x y |> Seq.sum |> finish
             else
                 0
-
-    interface INotifyPropertyChanged with
-        [<CLIEvent>]
-        member __.PropertyChanged = notify.Publish
