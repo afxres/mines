@@ -21,10 +21,11 @@
           </StackPanel>
           <TextBlock x:Name="banner" HorizontalAlignment="Center" />
         </StackPanel>
-        <Grid Grid.Row="2" RowDefinitions="Auto 8 Auto 8 Auto">
+        <Grid Grid.Row="2" RowDefinitions="Auto 8 Auto 8 Auto 8 Auto">
           <Button x:Name="reopen" Grid.Row="0">New Game</Button>
-          <Button x:Name="remove" Grid.Row="2">Auto Remove</Button>
-          <Button x:Name="remark" Grid.Row="4">Auto Remark</Button>
+          <Button x:Name="change" Grid.Row="2">Change Difficulty</Button>
+          <Button x:Name="remove" Grid.Row="4">Auto Remove</Button>
+          <Button x:Name="remark" Grid.Row="8">Auto Remark</Button>
         </Grid>
       </Grid>
     </Grid>

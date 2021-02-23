@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="MineDisplayControl.fs" />
+    <Compile Include="MineGridConfigWindow.xaml.fs" />
     <Compile Include="MainWindow.xaml.fs" />
     <Compile Include="App.xaml.fs" />
     <Compile Include="Program.fs" />

@@ -27,16 +27,19 @@ type MainWindow() as me =
         let f = me.Find<TextBlock> "marker"
         let i = TimeSpan.FromMilliseconds (double 33)
         let mutable p = -1
+        let mutable q = -1
         async {
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
                 t.Text <- e.ToString @"d'.'hh':'mm':'ss'.'ff"
                 let g = me.DataContext :?> IMineGrid
                 if (g <> null) then
-                    let q = g.FlagCount
-                    if (p <> q) then
-                        p <- q
-                        f.Text <- $"{p} / {g.MineCount}"
+                    let a = g.FlagCount
+                    let b = g.MineCount
+                    if (a <> p || b <> q) then
+                        p <- a
+                        q <- b
+                        f.Text <- $"{p} / {q}"
                 do! Async.Sleep i
             ()
         }
@@ -50,17 +53,13 @@ type MainWindow() as me =
         | _ -> ()
         ())
 
-    let update (g : IMineGrid) =
+    let reopen (g : IMineGrid) =
         let o = me.DataContext :?> IMineGrid
         me.DataContext <- g
         g.StatusChanged.AddHandler statusChangedHandler
         if o <> null then
             o.StatusChanged.RemoveHandler statusChangedHandler
         viewer.Child <- MineDisplayControl(me :> TopLevel, g)
-        ()
-
-    let reopen () =
-        update (MineGrid(30, 16, 99))
         stopwatch.Reset()
         banner.Text <- String.Empty
         ()
@@ -68,7 +67,23 @@ type MainWindow() as me =
     let clickHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         let b = e.Source :?> Button
         match b.Name with
-        | "reopen" -> reopen ()
+        | "reopen" ->
+            let g = me.DataContext :?> IMineGrid
+            reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid)
+            ()
+        | "change" ->
+            let g = me.DataContext :?> IMineGrid
+            let w = MineGridConfigWindow()
+            w.DataContext <- g
+            let a = async {
+                do! w.ShowDialog me |> Async.AwaitTask
+                let r = w.DataContext :?> IMineGrid
+                if not (obj.ReferenceEquals(g, r)) then
+                    reopen r
+                ()
+            }
+            a |> Async.StartImmediate
+            ()
         | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid)
         | "remark" -> Laboratory.autoRemark (me.DataContext :?> IMineGrid)
         | _ -> ()
@@ -78,7 +93,7 @@ type MainWindow() as me =
     let opened () =
         me.AddHandler(Button.ClickEvent, clickHandler)
         ticker () |> Async.StartImmediate
-        reopen ()
+        reopen (MineGrid(30, 16, 99) :> IMineGrid)
         ()
 
     let closed () =
