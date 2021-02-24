@@ -22,5 +22,3 @@ type IMineGrid =
     abstract member Set : x : int * y : int * mark : MineMark -> unit
 
     abstract member Remove : x : int * y : int -> int
-
-    abstract member RemoveAll : x : int * y : int -> int
