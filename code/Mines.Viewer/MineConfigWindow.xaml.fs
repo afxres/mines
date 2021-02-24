@@ -7,7 +7,7 @@ open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
 open System
 
-type MineGridConfigWindow() as me =
+type MineConfigWindow() as me =
     inherit Window()
 
     do AvaloniaXamlLoader.Load me

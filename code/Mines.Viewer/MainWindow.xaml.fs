@@ -73,7 +73,7 @@ type MainWindow() as me =
             ()
         | "change" ->
             let g = me.DataContext :?> IMineGrid
-            let w = MineGridConfigWindow()
+            let w = MineConfigWindow()
             w.DataContext <- g
             let a = async {
                 do! w.ShowDialog me |> Async.AwaitTask
