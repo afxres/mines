@@ -84,8 +84,8 @@ type MainWindow() as me =
             }
             a |> Async.StartImmediate
             ()
-        | "remove" -> Laboratory.autoRemove (me.DataContext :?> IMineGrid)
-        | "remark" -> Laboratory.autoRemark (me.DataContext :?> IMineGrid)
+        | "remove" -> Laboratory.remove (me.DataContext :?> IMineGrid)
+        | "remark" -> Laboratory.remark (me.DataContext :?> IMineGrid)
         | _ -> ()
         me.Renderer.AddDirty viewer.Child
         ())

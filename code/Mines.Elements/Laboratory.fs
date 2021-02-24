@@ -3,13 +3,13 @@
 open Mikodev.Mines.Annotations
 open System
 
-let autoRemove (grid : IMineGrid) =
+let remove (grid : IMineGrid) =
     if grid = null then
         raise (ArgumentNullException(nameof grid))
     let w = grid.XMax
     let h = grid.YMax
 
-    let remove () =
+    let invoke () =
         let mutable n = 0
         let mutable x = 0
         while grid.Status = MineGridStatus.Wait && x < w do
@@ -20,10 +20,10 @@ let autoRemove (grid : IMineGrid) =
             x <- x + 1
         n
 
-    while remove () <> 0 do ()
+    while invoke () <> 0 do ()
     ()
 
-let autoRemark (grid : IMineGrid) =
+let remark (grid : IMineGrid) =
     if grid = null then
         raise (ArgumentNullException(nameof grid))
     let w = grid.XMax

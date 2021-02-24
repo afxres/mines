@@ -30,7 +30,7 @@ type MineGrid(w : int, h : int, count : int) as me =
         let data : byte array = Array.zeroCreate (w * h)
         let last = data.Length - 1
         Array.fill data 0 count Mine
-        Algorithms.shuffleInPlace (data.AsSpan(0, last))
+        Algorithms.shuffle (data.AsSpan(0, last))
 
         // 交换第一次点击的位置和最后一个位置
         let i = flatten x y

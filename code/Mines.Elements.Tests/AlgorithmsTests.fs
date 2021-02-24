@@ -12,9 +12,9 @@ type AlgorithmsTests() =
 
     [<Theory>]
     [<MemberData(nameof AlgorithmsTests.``Array Data``)>]
-    member __.``ShuffleInPlace`` (source : 'T array) =
+    member __.``Shuffle`` (source : 'T array) =
         let target = Array.copy source
-        Algorithms.shuffleInPlace (Span target)
+        Algorithms.shuffle (Span target)
         Assert.Equal<'T>(Array.sort source, Array.sort target)
         ()
 
