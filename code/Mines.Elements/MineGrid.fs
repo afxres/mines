@@ -2,6 +2,7 @@
 
 open Mikodev.Mines.Annotations
 open System
+open System.Collections.Generic
 
 type MineGrid(w : int, h : int, count : int) as me =
     [<Literal>]
@@ -64,18 +65,28 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let update x = step <- x; status.Trigger(me, EventArgs.Empty)
 
-    // 递归翻开周围方块
-    let rec remove x y =
-        let i = flatten x y
-        let m = &face.[i]
-        match m with
-        | TileMark.Tile ->
-            m <- TileMark.None
-            match back.[i] with
-            | 0uy -> adjacent remove x y |> Seq.sum |> (+) 1
-            | Mine -> miss <- i; 1
-            | _ -> 1
-        | _ -> 0
+    // 移除方块 (原递归方法可能会栈溢出, 此处改用开闭列表)
+    let remove x y =
+        let adjacent = Algorithms.adjacent w h
+        let mutable o = List<_>(Seq.singleton (x, y))
+        let mutable c = HashSet<_>()
+        let mutable n = 0
+        while o.Count > 0 do
+            let t = o.Count - 1
+            let p = o.[t]
+            o.RemoveAt t
+            if c.Add p then
+                let a, b = p
+                let i = flatten a b
+                let m = &face.[i]
+                if (m = TileMark.Tile) then
+                    m <- TileMark.None
+                    n <- n + 1
+                    match back.[i] with
+                    | 0uy -> adjacent a b |> Seq.iter o.Add
+                    | Mine -> miss <- i
+                    | _ -> ()
+        n
 
     let finish n =
         assert (n <= tile && n >= 0)
