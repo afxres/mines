@@ -22,32 +22,31 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let flatten = Algorithms.flatten w h
 
-    let adjacent f x y = Algorithms.adjacent w h x y |> Seq.map ((<||) f)
+    let generate x y =
+        let select a x y = if Array.get a (flatten x y) = Mine then 1 else 0
+        let detect a x y = Algorithms.adjacent w h x y |> Seq.sumBy ((<||) (select a))
 
-    let calculate array item x y = adjacent flatten x y |> Seq.map (Array.get array) |> Seq.filter ((=) item) |> Seq.length
-
-    let generate i =
         // 调用洗牌算法并忽略最后一个位置
-        let result : byte array = Array.zeroCreate (w * h)
-        let last = result.Length - 1
-        Array.fill result 0 count Mine
-        Algorithms.shuffleInPlace (result.AsSpan(0, last))
+        let data : byte array = Array.zeroCreate (w * h)
+        let last = data.Length - 1
+        Array.fill data 0 count Mine
+        Algorithms.shuffleInPlace (data.AsSpan(0, last))
 
         // 交换第一次点击的位置和最后一个位置
-        let x = result.[last]
-        result.[last] <- result.[i]
-        result.[i] <- x
+        let i = flatten x y
+        let k = data.[last]
+        data.[last] <- data.[i]
+        data.[i] <- k
 
         // 计算每个位置周围的雷个数
-        for m = 0 to w - 1 do
-            for n = 0 to h - 1 do
-                let i = flatten m n
-                if (result.[i] <> Mine) then
-                    result.[i] <- byte (calculate result Mine m n)
-                ()
+        for x = 0 to w - 1 do
+            for y = 0 to h - 1 do
+                let m = &data.[flatten x y]
+                if (m <> Mine) then
+                    m <- detect data x y |> byte
 
-        assert (result.[i] <> Mine)
-        result
+        assert (data.[i] <> Mine)
+        data
 
     let status = Event<_, _>()
 
@@ -86,16 +85,6 @@ type MineGrid(w : int, h : int, count : int) as me =
                     | 0uy -> adjacent a b |> Seq.iter o.Add
                     | Mine -> miss <- i
                     | _ -> ()
-        n
-
-    let finish n =
-        assert (n <= tile && n >= 0)
-        tile <- tile - n
-        assert (step = MineGridStatus.Wait)
-        if miss <> -1 then
-            update MineGridStatus.Over
-        elif tile = count then
-            update MineGridStatus.Done
         n
 
     interface IMineGrid with
@@ -145,10 +134,18 @@ type MineGrid(w : int, h : int, count : int) as me =
             ()
 
         member __.Remove(x, y) =
-            let i = flatten x y
             if step = MineGridStatus.None then
-                back <- generate i
+                back <- generate x y
                 update MineGridStatus.Wait
             elif step <> MineGridStatus.Wait then
                 invalidOp "Game is over!"
-            remove x y |> finish
+
+            let n = remove x y
+            assert (n <= tile && n >= 0)
+            tile <- tile - n
+            assert (step = MineGridStatus.Wait)
+            if miss <> -1 then
+                update MineGridStatus.Over
+            elif tile = count then
+                update MineGridStatus.Done
+            n
