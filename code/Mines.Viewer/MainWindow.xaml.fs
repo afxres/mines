@@ -65,27 +65,22 @@ type MainWindow() as me =
         ()
 
     let clickHandler = EventHandler<RoutedEventArgs>(fun _ e ->
-        let b = e.Source :?> Button
-        match b.Name with
-        | "reopen" ->
-            let g = me.DataContext :?> IMineGrid
-            reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid)
-            ()
-        | "change" ->
-            let g = me.DataContext :?> IMineGrid
-            let w = MineConfigWindow()
-            w.DataContext <- g
-            let a = async {
+        let config g =
+            let w = MineConfigWindow(DataContext = g)
+            async {
                 do! w.ShowDialog me |> Async.AwaitTask
                 let r = w.DataContext :?> IMineGrid
                 if not (obj.ReferenceEquals(g, r)) then
                     reopen r
-                ()
             }
-            a |> Async.StartImmediate
-            ()
-        | "remove" -> Laboratory.remove (me.DataContext :?> IMineGrid)
-        | "remark" -> Laboratory.remark (me.DataContext :?> IMineGrid)
+
+        let b = e.Source :?> Button
+        let g = me.DataContext :?> IMineGrid
+        match b.Name with
+        | "reopen" -> reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid)
+        | "change" -> config g |> Async.StartImmediate
+        | "remove" -> Laboratory.remove g
+        | "remark" -> Laboratory.remark g
         | _ -> ()
         me.Renderer.AddDirty viewer.Child
         ())
