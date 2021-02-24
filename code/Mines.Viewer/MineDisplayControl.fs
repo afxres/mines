@@ -64,6 +64,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
         if up <> out && up = down then
             let struct (x, y) = up
             grid.RemoveAll(x, y) |> ignore
+            top.Renderer.AddDirty me
         ())
 
     let attached () =
