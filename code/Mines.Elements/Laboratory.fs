@@ -15,7 +15,7 @@ let autoRemove (grid : IMineGrid) =
         while grid.Status = MineGridStatus.Wait && x < w do
             let mutable y = 0
             while grid.Status = MineGridStatus.Wait && y < h do
-                n <- n + grid.RemoveAll(x, y)
+                n <- n + Operations.reduce grid x y
                 y <- y + 1
             x <- x + 1
         n
@@ -32,11 +32,11 @@ let autoRemark (grid : IMineGrid) =
     while grid.Status = MineGridStatus.Wait && x < w do
         let mutable y = 0
         while grid.Status = MineGridStatus.Wait && y < h do
-            let m = grid.Get(x, y)
+            let m = Operations.get grid x y
             if int m >= 1 && int m <= 8 then
-                let l = Algorithms.adjacent w h x y |> Seq.choose (fun (a, b) -> if grid.Get(a, b) |> int > 8 then Some (a, b) else None) |> Seq.toList
+                let l = Algorithms.adjacent w h x y |> Seq.choose (fun (a, b) -> if Operations.get grid a b |> int > 8 then Some (a, b) else None) |> Seq.toList
                 if (l |> List.length = int m) then
-                    for (a, b) in l do grid.Set(a, b, MineMark.Flag)
+                    for (a, b) in l do Operations.set grid a b MineMark.Flag
             y <- y + 1
         x <- x + 1
     ()

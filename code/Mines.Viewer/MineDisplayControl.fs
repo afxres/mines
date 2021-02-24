@@ -54,7 +54,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
             let struct (x, y) = up
             let p = e.GetCurrentPoint(me).Properties
             match p.PointerUpdateKind with
-            | PointerUpdateKind.LeftButtonReleased -> grid.Remove(x, y) |> ignore
+            | PointerUpdateKind.LeftButtonReleased -> Operations.remove grid x y |> ignore
             | PointerUpdateKind.RightButtonReleased -> Operations.toggle grid x y
             | _ -> ()
             top.Renderer.AddDirty me
@@ -63,7 +63,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         if up <> out && up = down then
             let struct (x, y) = up
-            grid.RemoveAll(x, y) |> ignore
+            Operations.reduce grid x y |> ignore
             top.Renderer.AddDirty me
         ())
 
@@ -153,7 +153,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
         for m = 0 to w - 1 do
             for n = 0 to h - 1 do
                 let rect = Rect(double m * (size + margin), double n * (size + margin), size, size)
-                let mark = grid.Get(m, n)
+                let mark = Operations.get grid m n
                 back rect mark
                 face rect mark
         ()
