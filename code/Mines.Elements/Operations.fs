@@ -21,6 +21,8 @@ let toggle (grid : IMineGrid) x y =
     ()
 
 let reduce (grid : IMineGrid) x y =
+    let s = fun struct (_, _, d) -> if d = MineData.Flag then 1 else 0
+    let m (g : IMineGrid) = fun struct (m, n) -> struct (m, n, (get g m n))
     let f (g : IMineGrid) =
         fun struct (a, b, d) ->
             if g.Status = MineGridStatus.Wait then
@@ -33,8 +35,8 @@ let reduce (grid : IMineGrid) x y =
 
     let n = get grid x y |> int
     if (n > 0 && n < 8) then
-        let l = Algorithms.adjacent grid.XMax grid.YMax x y |> Seq.map (fun struct (m, n) -> struct (m, n, (get grid m n))) |> Seq.toList
-        let s = l |> List.sumBy (fun struct (_, _, d) -> if d = MineData.Flag then 1 else 0)
+        let l = Algorithms.adjacent grid.XMax grid.YMax x y |> Seq.map (m grid) |> Seq.toList
+        let s = l |> List.sumBy s
         if (s >= n) then
             l |> List.sumBy (f grid)
         else
