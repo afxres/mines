@@ -35,5 +35,6 @@ type AlgorithmsTests() =
     [<MemberData(nameof AlgorithmsTests.``Index Data``)>]
     member __.``Adjacent`` (w : int, h : int, x : int, y : int, expected : (int * int) array) =
         let result = Algorithms.adjacent w h x y |> Seq.toArray
-        Assert.Equal<(int * int)>(expected, result)
+        let select = fun (a, b) -> struct (a, b)
+        Assert.Equal<struct (int * int)>(expected |> Array.map select, result)
         ()

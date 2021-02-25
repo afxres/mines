@@ -23,8 +23,8 @@ type MineGrid(w : int, h : int, count : int) as me =
     let flatten = Algorithms.flatten w h
 
     let generate x y =
-        let select a x y = if Array.get a (flatten x y) = Mine then 1 else 0
-        let detect a x y = Algorithms.adjacent w h x y |> Seq.sumBy ((<||) (select a))
+        let select a = fun struct (x, y) -> if Array.get a (flatten x y) = Mine then 1 else 0
+        let detect a x y = Algorithms.adjacent w h x y |> Seq.sumBy (select a)
 
         // 调用洗牌算法并忽略最后一个位置
         let data : byte array = Array.zeroCreate (w * h)
@@ -69,7 +69,7 @@ type MineGrid(w : int, h : int, count : int) as me =
     // 移除方块 (原递归方法可能会栈溢出, 此处改用开闭列表)
     let remove x y =
         let adjacent = Algorithms.adjacent w h
-        let mutable o = List<_>(Seq.singleton (x, y))
+        let mutable o = List<_>(Seq.singleton struct (x, y))
         let mutable c = HashSet<_>()
         let mutable n = 0
         while o.Count > 0 do
@@ -77,7 +77,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             let p = o.[t]
             o.RemoveAt t
             if c.Add p then
-                let a, b = p
+                let struct (a, b) = p
                 let i = flatten a b
                 let m = &face.[i]
                 if (m = TileMark.Tile) then

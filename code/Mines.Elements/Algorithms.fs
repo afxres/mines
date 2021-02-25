@@ -32,5 +32,5 @@ let adjacent (w : int) (h : int) (x : int) (y : int) =
         for v = t to b do
             for i = l to r do
                 if v <> 0 || i <> 0 then
-                    yield (x + i), (y + v)
+                    yield struct ((x + i), (y + v))
     }
