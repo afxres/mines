@@ -29,19 +29,18 @@ type MainWindow() as me =
         let t = me.Find<TextBlock> "ticker"
         let f = me.Find<TextBlock> "marker"
         let i = TimeSpan.FromMilliseconds (double 33)
-        let mutable p = -1
-        let mutable q = -1
+        let mutable g = me.DataContext |> unbox<IMineGrid>
+        let mutable v = g.Version
         async {
             while not source.IsCancellationRequested do
                 let e = stopwatch.Elapsed
                 t.Text <- e.ToString @"d'.'hh':'mm':'ss'.'ff"
-                let g = me.DataContext |> unbox<IMineGrid>
-                let a = g.FlagCount
-                let b = g.MineCount
-                if (a <> p || b <> q) then
-                    p <- a
-                    q <- b
-                    f.Text <- $"{p} / {q}"
+                let t = me.DataContext |> unbox<IMineGrid>
+                if not (obj.ReferenceEquals(g, t)) || v <> t.Version then
+                    g <- t
+                    v <- t.Version
+                    f.Text <- $"{t.FlagCount} / {t.MineCount}"
+                    me.Renderer.AddDirty viewer.Child
                 do! Async.Sleep i
             ()
         }
@@ -83,7 +82,6 @@ type MainWindow() as me =
         | "remove" -> Laboratory.remove g
         | "remark" -> Laboratory.remark g
         | _ -> ()
-        me.Renderer.AddDirty viewer.Child
         ())
 
     let opened () =

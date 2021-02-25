@@ -57,14 +57,12 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
             | PointerUpdateKind.LeftButtonReleased -> Operations.remove grid x y |> ignore
             | PointerUpdateKind.RightButtonReleased -> Operations.toggle grid x y
             | _ -> ()
-            top.Renderer.AddDirty me
         ())
 
     let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
         if up <> out && up = down then
             let struct (x, y) = up
             Operations.reduce grid x y |> ignore
-            top.Renderer.AddDirty me
         ())
 
     let attached () =
