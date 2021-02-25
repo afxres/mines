@@ -1,26 +1,17 @@
 ﻿module Mikodev.Mines.Elements.Operations
 
 open Mikodev.Mines.Annotations
-open System
 
 let get (grid : IMineGrid) x y =
-    if grid = null then
-        raise (ArgumentNullException (nameof grid))
     grid.Get(x, y)
 
 let set (grid : IMineGrid) x y mark =
-    if grid = null then
-        raise (ArgumentNullException (nameof grid))
     grid.Set(x, y, mark)
 
 let remove (grid : IMineGrid) x y =
-    if grid = null then
-        raise (ArgumentNullException (nameof grid))
     grid.Remove(x, y)
 
 let toggle (grid : IMineGrid) x y =
-    if grid = null then
-        raise (ArgumentNullException (nameof grid))
     let i = get grid x y
     match i with
     | MineData.Tile -> set grid x y MineMark.Flag
@@ -39,8 +30,6 @@ let reduce (grid : IMineGrid) x y =
         else
             0
 
-    if grid = null then
-        raise (ArgumentNullException (nameof grid))
     let n = get grid x y |> int
     if (n > 0 && n < 8) then
         let l = Algorithms.adjacent grid.XMax grid.YMax x y |> Seq.map (fun (m, n) -> m, n, (get grid m n)) |> Seq.toList

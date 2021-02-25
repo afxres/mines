@@ -2,7 +2,6 @@
 
 open System
 
-[<AllowNullLiteral>]
 type IMineGrid =
     [<CLIEvent>]
     abstract member StatusChanged : IEvent<EventHandler, EventArgs>

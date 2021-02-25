@@ -1,11 +1,8 @@
 ﻿module Mikodev.Mines.Elements.Laboratory
 
 open Mikodev.Mines.Annotations
-open System
 
 let remove (grid : IMineGrid) =
-    if grid = null then
-        raise (ArgumentNullException(nameof grid))
     let w = grid.XMax
     let h = grid.YMax
 
@@ -24,8 +21,6 @@ let remove (grid : IMineGrid) =
     ()
 
 let remark (grid : IMineGrid) =
-    if grid = null then
-        raise (ArgumentNullException(nameof grid))
     let w = grid.XMax
     let h = grid.YMax
     let mutable x = 0

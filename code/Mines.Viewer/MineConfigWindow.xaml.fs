@@ -33,7 +33,7 @@ type MineConfigWindow() as me =
 
         match b.Name with
         | "accept" ->
-            let g = me.DataContext :?> IMineGrid
+            let g = me.DataContext |> unbox<IMineGrid>
             let a = get x 2 max g.XMax
             let b = get y 2 max g.YMax
             let c = get count 1 (a * b - 1) g.MineCount
@@ -45,7 +45,7 @@ type MineConfigWindow() as me =
 
     let opened () =
         me.AddHandler(Button.ClickEvent, clickHandler)
-        let g = me.DataContext :?> IMineGrid
+        let g = me.DataContext |> unbox<IMineGrid>
         x.Text <- string g.XMax
         y.Text <- string g.YMax
         count.Text <- string g.MineCount
