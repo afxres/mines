@@ -8,6 +8,8 @@ type IMineGrid =
 
     abstract member Status : MineGridStatus
 
+    abstract member Version : int
+
     abstract member XMax : int
 
     abstract member YMax : int

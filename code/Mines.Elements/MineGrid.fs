@@ -62,6 +62,8 @@ type MineGrid(w : int, h : int, count : int) as me =
 
     let mutable flag = 0
 
+    let mutable code = 0
+
     let update x = step <- x; status.Trigger(me, EventArgs.Empty)
 
     // 移除方块 (原递归方法可能会栈溢出, 此处改用开闭列表)
@@ -92,6 +94,8 @@ type MineGrid(w : int, h : int, count : int) as me =
         member __.StatusChanged = status.Publish
 
         member __.Status: MineGridStatus = step
+
+        member __.Version = code
 
         member __.XMax = w
 
@@ -126,6 +130,7 @@ type MineGrid(w : int, h : int, count : int) as me =
             let i = flatten x y
             let s = face.[i]
             if (s <> t) then
+                code <- code + 1
                 face.[i] <- t
                 if s = TileMark.Flag then
                     flag <- flag - 1
@@ -142,10 +147,12 @@ type MineGrid(w : int, h : int, count : int) as me =
 
             let n = remove x y
             assert (n <= tile && n >= 0)
-            tile <- tile - n
             assert (step = MineGridStatus.Wait)
-            if miss <> -1 then
-                update MineGridStatus.Over
-            elif tile = count then
-                update MineGridStatus.Done
+            if (n <> 0) then
+                code <- code + 1
+                tile <- tile - n
+                if miss <> -1 then
+                    update MineGridStatus.Over
+                elif tile = count then
+                    update MineGridStatus.Done
             n
