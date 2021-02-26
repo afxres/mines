@@ -89,6 +89,8 @@ type MineGrid(w : int, h : int, count : int) as me =
                     | _ -> ()
         n
 
+    let fail () = raise (MineGridStatusException $"Can not operate now, status: {step}")
+
     interface IMineGrid with
         [<CLIEvent>]
         member __.StatusChanged = status.Publish
@@ -118,7 +120,7 @@ type MineGrid(w : int, h : int, count : int) as me =
 
         member __.Set(x, y, mark) =
             if step <> MineGridStatus.None && step <> MineGridStatus.Wait then
-                invalidOp "Can not operate now!"
+                fail ()
 
             let t =
                 match mark with
@@ -143,7 +145,7 @@ type MineGrid(w : int, h : int, count : int) as me =
                 back <- generate x y
                 update MineGridStatus.Wait
             elif step <> MineGridStatus.Wait then
-                invalidOp "Game is over!"
+                fail ()
 
             let n = remove x y
             assert (n <= tile && n >= 0)
