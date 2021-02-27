@@ -55,7 +55,7 @@ let except (grid : IMineGrid) =
 
     let tile a = a = MineData.Tile || a = MineData.What
 
-    let free a = int a > 0 && int a < 8
+    let free n = int n >= 1 && int n <= 8
 
     let get = fun struct (x, y) -> Operations.get grid x y
 
