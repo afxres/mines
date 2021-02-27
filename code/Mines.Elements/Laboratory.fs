@@ -3,30 +3,31 @@
 open Mikodev.Mines.Annotations
 open System.Collections.Generic
 
+let private ensure (g : IMineGrid) f = async {
+    if g.Status = MineGridStatus.Wait then
+        try
+            do! f ()
+        with
+        | MineGridStatusException _ -> ()
+}
+
 let remove (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
     let h = grid.YMax
 
     let invoke () = async {
-        let mutable n = 0
-        for x = 0 to w - 1 do
-            for y = 0 to h - 1 do
-                if asynchronous then
-                    do! Async.Sleep 0
-                n <- n + Operations.reduce grid x y
-        return n
+        let mutable t = true
+        while t do
+            let mutable n = 0
+            for x = 0 to w - 1 do
+                for y = 0 to h - 1 do
+                    if asynchronous then
+                        do! Async.Sleep 0
+                    n <- n + Operations.reduce grid x y
+            t <- n <> 0
     }
 
-    async {
-        if grid.Status = MineGridStatus.Wait then
-            try
-                let mutable stop = false
-                while not stop do
-                    let! n = invoke()
-                    stop <- n = 0
-            with
-            | MineGridStatusException _ -> ()
-    }
+    ensure grid invoke
 
 let remark (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
@@ -50,13 +51,7 @@ let remark (grid : IMineGrid) (asynchronous : bool) =
                         for struct (a, b) in l do Operations.set grid a b MineMark.Flag
     }
 
-    async {
-        if grid.Status = MineGridStatus.Wait then
-            try
-                do! invoke() |> Async.Ignore
-            with
-            | MineGridStatusException _ -> ()
-    }
+    ensure grid invoke
 
 let except (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
@@ -87,8 +82,8 @@ let except (grid : IMineGrid) (asynchronous : bool) =
     }
 
     let reachable a = seq {
-        for m in adjacent a do
-            for n in choose free m do
+        for i in adjacent a do
+            for n in choose free i do
                 if a <> n then
                     yield n
     }
@@ -129,7 +124,7 @@ let except (grid : IMineGrid) (asynchronous : bool) =
     let handle (c : HashSet<_>) x y =
         let i = struct (x, y)
         let n = get i
-        if (free n && choose flag i|> Seq.length < int n) then
+        if (free n && choose flag i |> Seq.length < int n) then
             let items = reachable i |> Seq.toList
             for k in items do
                 let a = c.Add(struct (i, k))
@@ -151,10 +146,4 @@ let except (grid : IMineGrid) (asynchronous : bool) =
                 handle c x y
     }
 
-    async {
-        if grid.Status = MineGridStatus.Wait then
-            try
-                do! invoke() |> Async.Ignore
-            with
-            | MineGridStatusException _ -> ()
-    }
+    ensure grid invoke
