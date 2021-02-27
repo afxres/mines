@@ -82,9 +82,6 @@ let except (grid : IMineGrid) =
     }
 
     let select a b =
-        // flags
-        let fa = choose flag a |> Set
-        let fb = choose flag b |> Set
         // tiles or question marks (untouched)
         let ua = choose tile a |> Set
         let ub = choose tile b |> Set
@@ -93,9 +90,12 @@ let except (grid : IMineGrid) =
         if (not (Set.isEmpty ui)) then
             let ea = Set.difference ua ui
             let eb = Set.difference ub ui
+            // flag count
+            let fa = choose flag a |> Seq.length
+            let fb = choose flag b |> Seq.length
             // mine count (remaining)
-            let ra = int (get a) - fa.Count
-            let rb = int (get b) - fb.Count
+            let ra = int (get a) - fa
+            let rb = int (get b) - fb
             // mine count in the intersection (minimum)
             let ca = ra - ea.Count
             let cb = rb - eb.Count
@@ -114,19 +114,25 @@ let except (grid : IMineGrid) =
                         remark eb
         ()
 
+    let handle (c : HashSet<_>) x y =
+        let i = struct (x, y)
+        let n = get i
+        if (free n && choose flag i|> Seq.length < int n) then
+            let items = reachable i |> Seq.toList
+            for k in items do
+                let a = c.Add(struct (i, k))
+                let b = c.Add(struct (k, i))
+                if (a && b) then
+                    select i k
+
     let invoke () =
         let c = HashSet<_>()
         for x = 0 to w - 1 do
             for y = 0 to h - 1 do
-                let i = struct (x, y)
-                let n = get i
-                if (free n && choose flag i|> Seq.length < int n) then
-                    let items = reachable i |> Set
-                    for k in items do
-                        let a = c.Add(struct (i, k))
-                        let b = c.Add(struct (k, i))
-                        if (a && b) then
-                            select i k
+                handle c x y
+        for x = w - 1 downto 0 do
+            for y = h - 1 downto 0 do
+                handle c x y
 
     if grid.Status = MineGridStatus.Wait then
         try
