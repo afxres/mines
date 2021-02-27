@@ -12,9 +12,6 @@ type MineConfigWindow() as me =
 
     do AvaloniaXamlLoader.Load me
 
-    [<Literal>]
-    let max = 512
-
     let x = me.Find<TextBox> "x"
 
     let y = me.Find<TextBox> "y"
@@ -34,8 +31,8 @@ type MineConfigWindow() as me =
         match b.Name with
         | "accept" ->
             let g = me.DataContext |> unbox<IMineGrid>
-            let a = get x 2 max g.XMax
-            let b = get y 2 max g.YMax
+            let a = get x 2 600 g.XMax
+            let b = get y 2 320 g.YMax
             let c = get count 1 (a * b - 1) g.MineCount
             me.DataContext <- MineGrid(a, b, c)
             ()
