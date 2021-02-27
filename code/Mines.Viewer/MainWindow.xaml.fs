@@ -17,9 +17,13 @@ type MainWindow() as me =
     // 规避后续空引用检查
     do me.DataContext <- MineGrid(2, 2, 2)
 
-    let banner = me.Find<TextBlock> "banner"
+    let center = me.Find<Grid> "center"
 
     let viewer = me.Find<Viewbox> "viewer"
+
+    let banner = me.Find<TextBlock> "banner"
+
+    let asynchronous = me.Find<CheckBox> "asynchronous"
 
     let stopwatch = Stopwatch()
 
@@ -76,13 +80,20 @@ type MainWindow() as me =
 
         let b = e.Source :?> Button
         let g = me.DataContext |> unbox<IMineGrid>
-        match b.Name with
-        | "reopen" -> reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid)
-        | "change" -> config g |> Async.StartImmediate
-        | "remove" -> Laboratory.remove g
-        | "remark" -> Laboratory.remark g
-        | "except" -> Laboratory.except g
-        | _ -> ()
+        let c = asynchronous.IsChecked = Nullable true
+
+        center.IsEnabled <- false
+        let a = async {
+            match b.Name with
+            | "reopen" -> reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid);
+            | "change" -> do! config g
+            | "remove" -> do! Laboratory.remove g c
+            | "remark" -> do! Laboratory.remark g c
+            | "except" -> do! Laboratory.except g c
+            | _ -> ()
+            center.IsEnabled <- true
+        }
+        Async.StartImmediate a
         ())
 
     let opened () =

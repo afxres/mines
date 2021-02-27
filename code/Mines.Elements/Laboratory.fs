@@ -3,25 +3,32 @@
 open Mikodev.Mines.Annotations
 open System.Collections.Generic
 
-let remove (grid : IMineGrid) =
+let remove (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
     let h = grid.YMax
 
-    let invoke () =
+    let invoke () = async {
         let mutable n = 0
         for x = 0 to w - 1 do
             for y = 0 to h - 1 do
+                if asynchronous then
+                    do! Async.Sleep 0
                 n <- n + Operations.reduce grid x y
-        n
+        return n
+    }
 
-    if grid.Status = MineGridStatus.Wait then
-        try
-            while invoke () <> 0 do ()
-        with
-        | MineGridStatusException _ -> ()
-    ()
+    async {
+        if grid.Status = MineGridStatus.Wait then
+            try
+                let mutable stop = false
+                while not stop do
+                    let! n = invoke()
+                    stop <- n = 0
+            with
+            | MineGridStatusException _ -> ()
+    }
 
-let remark (grid : IMineGrid) =
+let remark (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
     let h = grid.YMax
 
@@ -31,23 +38,27 @@ let remark (grid : IMineGrid) =
                 yield struct (a, b)
     }
 
-    let invoke () =
+    let invoke () = async {
         for x = 0 to w - 1 do
             for y = 0 to h - 1 do
+                if asynchronous then
+                    do! Async.Sleep 0
                 let n = Operations.get grid x y
                 if int n >= 1 && int n <= 8 then
                     let l = choose x y |> Seq.toList
                     if (l |> List.length = int n) then
                         for struct (a, b) in l do Operations.set grid a b MineMark.Flag
+    }
 
-    if grid.Status = MineGridStatus.Wait then
-        try
-            invoke ()
-        with
-        | MineGridStatusException _ -> ()
-    ()
+    async {
+        if grid.Status = MineGridStatus.Wait then
+            try
+                do! invoke() |> Async.Ignore
+            with
+            | MineGridStatusException _ -> ()
+    }
 
-let except (grid : IMineGrid) =
+let except (grid : IMineGrid) (asynchronous : bool) =
     let w = grid.XMax
     let h = grid.YMax
 
@@ -126,18 +137,24 @@ let except (grid : IMineGrid) =
                 if (a && b) then
                     select i k
 
-    let invoke () =
+    let invoke () = async {
         let c = HashSet<_>()
         for x = 0 to w - 1 do
             for y = 0 to h - 1 do
+                if asynchronous then
+                    do! Async.Sleep 0
                 handle c x y
         for x = w - 1 downto 0 do
             for y = h - 1 downto 0 do
+                if asynchronous then
+                    do! Async.Sleep 0
                 handle c x y
+    }
 
-    if grid.Status = MineGridStatus.Wait then
-        try
-            invoke ()
-        with
-        | MineGridStatusException _ -> ()
-    ()
+    async {
+        if grid.Status = MineGridStatus.Wait then
+            try
+                do! invoke() |> Async.Ignore
+            with
+            | MineGridStatusException _ -> ()
+    }
