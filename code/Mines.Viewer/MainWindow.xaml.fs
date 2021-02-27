@@ -81,7 +81,7 @@ type MainWindow() as me =
         | "change" -> config g |> Async.StartImmediate
         | "remove" -> Laboratory.remove g
         | "remark" -> Laboratory.remark g
-        | "except" -> Laboratory.intersect g
+        | "except" -> Laboratory.except g
         | _ -> ()
         ())
 
