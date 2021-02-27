@@ -3,21 +3,20 @@
 open Mikodev.Mines.Annotations
 
 let remove (grid : IMineGrid) =
-    let w = grid.XMax
-    let h = grid.YMax
-
     let invoke () =
+        let w = grid.XMax
+        let h = grid.YMax
         let mutable n = 0
-        let mutable x = 0
-        while grid.Status = MineGridStatus.Wait && x < w do
-            let mutable y = 0
-            while grid.Status = MineGridStatus.Wait && y < h do
+        for x = 0 to w - 1 do
+            for y = 0 to h - 1 do
                 n <- n + Operations.reduce grid x y
-                y <- y + 1
-            x <- x + 1
         n
 
-    while invoke () <> 0 do ()
+    if grid.Status = MineGridStatus.Wait then
+        try
+            while invoke () <> 0 do ()
+        with
+        | MineGridStatusException _ -> ()
     ()
 
 let remark (grid : IMineGrid) =
@@ -28,19 +27,22 @@ let remark (grid : IMineGrid) =
             else
                 None
 
-    let w = grid.XMax
-    let h = grid.YMax
-    let mutable x = 0
-    while grid.Status = MineGridStatus.Wait && x < w do
-        let mutable y = 0
-        while grid.Status = MineGridStatus.Wait && y < h do
-            let m = Operations.get grid x y
-            if int m >= 1 && int m <= 8 then
-                let l = Algorithms.adjacent w h x y |> Seq.choose (f grid) |> Seq.toList
-                if (l |> List.length = int m) then
-                    for struct (a, b) in l do Operations.set grid a b MineMark.Flag
-            y <- y + 1
-        x <- x + 1
+    let invoke () =
+        let w = grid.XMax
+        let h = grid.YMax
+        for x = 0 to w - 1 do
+            for y = 0 to h - 1 do
+                let m = Operations.get grid x y
+                if int m >= 1 && int m <= 8 then
+                    let l = Algorithms.adjacent w h x y |> Seq.choose (f grid) |> Seq.toList
+                    if (l |> List.length = int m) then
+                        for struct (a, b) in l do Operations.set grid a b MineMark.Flag
+
+    if grid.Status = MineGridStatus.Wait then
+        try
+            invoke ()
+        with
+        | MineGridStatusException _ -> ()
     ()
 
 let intersect (grid : IMineGrid) =
@@ -116,12 +118,19 @@ let intersect (grid : IMineGrid) =
                         eb |> Seq.iter (toggle >> ignore)
         ()
 
-    for x = 0 to w - 1 do
-        for y = 0 to h - 1 do
-            let i = struct (x, y)
-            let n = get i
-            if (free n && count flag i < int n) then
-                let items = reachable i |> Set
-                for k in items do
-                    select i k
+    let invoke () =
+        for x = 0 to w - 1 do
+            for y = 0 to h - 1 do
+                let i = struct (x, y)
+                let n = get i
+                if (free n && count flag i < int n) then
+                    let items = reachable i |> Set
+                    for k in items do
+                        select i k
+
+    if grid.Status = MineGridStatus.Wait then
+        try
+            invoke ()
+        with
+        | MineGridStatusException _ -> ()
     ()
