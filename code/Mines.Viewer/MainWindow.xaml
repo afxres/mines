@@ -22,11 +22,11 @@
           <TextBlock x:Name="banner" HorizontalAlignment="Center" />
         </StackPanel>
         <Grid x:Name="center" Grid.Row="3" RowDefinitions="Auto 8 Auto 8 Auto 8 Auto 8 Auto 8 Auto">
-          <Button x:Name="reopen" Grid.Row="0">New Game</Button>
-          <Button x:Name="change" Grid.Row="2">Change Difficulty</Button>
-          <Button x:Name="remove" Grid.Row="4">Auto Remove</Button>
-          <Button x:Name="remark" Grid.Row="6">Auto Remark</Button>
-          <Button x:Name="except" Grid.Row="8">Adjacent Finding</Button>
+          <Button Grid.Row="0" CommandParameter="reopen" HotKey="Ctrl+R">New Game</Button>
+          <Button Grid.Row="2" CommandParameter="change" HotKey="Ctrl+N">Change Difficulty</Button>
+          <Button Grid.Row="4" CommandParameter="remove" HotKey="Ctrl+D1">Auto Remove</Button>
+          <Button Grid.Row="6" CommandParameter="remark" HotKey="Ctrl+D2">Auto Remark</Button>
+          <Button Grid.Row="8" CommandParameter="except" HotKey="Ctrl+D3">Adjacent Finding</Button>
           <CheckBox x:Name="asynchronous" Grid.Row="10" IsChecked="True">Asynchronous Mode</CheckBox>
         </Grid>
       </Grid>
