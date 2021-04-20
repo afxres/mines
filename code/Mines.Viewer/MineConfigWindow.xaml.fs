@@ -1,5 +1,6 @@
 ﻿namespace Mikodev.Mines.Viewer
 
+open Avalonia
 open Avalonia.Controls
 open Avalonia.Interactivity
 open Avalonia.Markup.Xaml
@@ -11,6 +12,10 @@ type MineConfigWindow() as me =
     inherit Window()
 
     do AvaloniaXamlLoader.Load me
+
+#if DEBUG
+    do me.AttachDevTools()
+#endif
 
     let x = me.Find<TextBox> "x"
 

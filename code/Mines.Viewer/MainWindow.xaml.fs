@@ -1,5 +1,6 @@
 ﻿namespace Mikodev.Mines.Viewer
 
+open Avalonia
 open Avalonia.Controls
 open Avalonia.Markup.Xaml
 open Mikodev.Mines.Annotations
@@ -13,6 +14,10 @@ type MainWindow() as me =
     inherit Window()
 
     do AvaloniaXamlLoader.Load me
+
+#if DEBUG
+    do me.AttachDevTools()
+#endif
 
     // 规避后续空引用检查
     do me.DataContext <- MineGrid(2, 2, 2)
@@ -103,7 +108,7 @@ type MainWindow() as me =
         let mutable enable = true
         let change = Event<_, _>()
 
-        let invoke tag = 
+        let invoke tag =
             enable <- false
             change.Trigger(me, EventArgs.Empty)
             Async.StartImmediate(async {
@@ -112,7 +117,7 @@ type MainWindow() as me =
                 change.Trigger(me, EventArgs.Empty)
             })
 
-        let handle = { 
+        let handle = {
             new ICommand with
                 [<CLIEvent>]
                 member __.CanExecuteChanged = change.Publish
