@@ -13,10 +13,14 @@ let shuffle (array : 'T Span) =
     ()
 
 /// 展开二维数组索引到一维数组索引
-let flatten (w : int) (h : int) (x : int) (y : int) =
-    if w < 0 || h < 0 || uint x > uint w || uint y > uint h then
+let flatten (w : int) (h : int) =
+    if w < 0 || h < 0 then
         raise (ArgumentOutOfRangeException())
-    y * w + x
+    let closure (x : int) (y : int) =
+        if uint x > uint w || uint y > uint h then
+            raise (ArgumentOutOfRangeException())
+        y * w + x
+    closure
 
 /// 指定位置周围的索引
 let adjacent (w : int) (h : int) (x : int) (y : int) =
