@@ -38,3 +38,12 @@ type AlgorithmsTests() =
         let select = fun (a, b) -> struct (a, b)
         Assert.Equal<struct (int * int)>(expected |> Array.map select, result)
         ()
+
+    [<Theory>]
+    [<InlineData(-1, 0)>]
+    [<InlineData(0, -1)>]
+    member __.``Flatten (argument error)`` (w, h) =
+        let error = Assert.Throws<ArgumentOutOfRangeException>(fun () -> Algorithms.flatten w h |> ignore)
+        Assert.Null error.ParamName
+        Assert.Equal(error.Message, ArgumentOutOfRangeException().Message)
+        ()
