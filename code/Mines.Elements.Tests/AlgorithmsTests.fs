@@ -47,3 +47,15 @@ type AlgorithmsTests() =
         Assert.Null error.ParamName
         Assert.Equal(error.Message, ArgumentOutOfRangeException().Message)
         ()
+
+    [<Theory>]
+    [<InlineData(1, 1, 0, 1)>]
+    [<InlineData(1, 1, 1, 0)>]
+    [<InlineData(1, 1, 0, -1)>]
+    [<InlineData(1, 1, -1, 0)>]
+    member __.``Flatten (closure argument error)`` (w, h, x, y) =
+        let closure = Algorithms.flatten w h
+        let error = Assert.Throws<ArgumentOutOfRangeException>(fun () -> closure x y |> ignore)
+        Assert.Null error.ParamName
+        Assert.Equal(error.Message, ArgumentOutOfRangeException().Message)
+        ()
