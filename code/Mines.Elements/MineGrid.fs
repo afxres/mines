@@ -69,8 +69,8 @@ type MineGrid(w : int, h : int, count : int) as me =
     // 移除方块 (原递归方法可能会栈溢出, 此处改用开闭列表)
     let remove x y =
         let adjacent = Algorithms.adjacent w h
-        let mutable o = List<_>(Seq.singleton struct (x, y))
-        let mutable c = HashSet<_>()
+        let o = List<_>(Seq.singleton struct (x, y))
+        let c = HashSet<_>()
         let mutable n = 0
         while o.Count > 0 do
             let t = o.Count - 1
