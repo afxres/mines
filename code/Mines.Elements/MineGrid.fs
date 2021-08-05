@@ -69,13 +69,11 @@ type MineGrid(w : int, h : int, count : int) as me =
     // 移除方块 (原递归方法可能会栈溢出, 此处改用开闭列表)
     let remove x y =
         let adjacent = Algorithms.adjacent w h
-        let o = List<_>(Seq.singleton struct (x, y))
+        let o = Queue<_>(Seq.singleton struct (x, y))
         let c = HashSet<_>()
         let mutable n = 0
         while o.Count > 0 do
-            let t = o.Count - 1
-            let p = o.[t]
-            o.RemoveAt t
+            let p = o.Dequeue()
             if c.Add p then
                 let struct (a, b) = p
                 let i = flatten a b
@@ -84,7 +82,7 @@ type MineGrid(w : int, h : int, count : int) as me =
                     m <- TileMark.None
                     n <- n + 1
                     match back.[i] with
-                    | 0uy -> adjacent a b |> Seq.iter o.Add
+                    | 0uy -> adjacent a b |> Seq.iter o.Enqueue
                     | Mine -> miss <- i
                     | _ -> ()
         n
