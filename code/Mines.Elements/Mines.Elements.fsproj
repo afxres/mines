@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Mikodev.Mines.Elements</AssemblyName>
     <RootNamespace>Mikodev.Mines.Elements</RootNamespace>
+    <LangVersion>5.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
