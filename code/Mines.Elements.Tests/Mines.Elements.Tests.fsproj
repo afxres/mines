@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Mikodev.Mines.Elements.Tests</AssemblyName>
     <RootNamespace>Mikodev.Mines.Elements.Tests</RootNamespace>
-    <LangVersion>5.0</LangVersion>
+    <LangVersion>6.0</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
