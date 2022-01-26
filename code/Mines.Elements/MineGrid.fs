@@ -34,18 +34,18 @@ type MineGrid(w : int, h : int, count : int) as me =
 
         // 交换第一次点击的位置和最后一个位置
         let i = flatten x y
-        let k = data.[last]
-        data.[last] <- data.[i]
-        data.[i] <- k
+        let k = data[last]
+        data[last] <- data[i]
+        data[i] <- k
 
         // 计算每个位置周围的雷个数
         for x = 0 to w - 1 do
             for y = 0 to h - 1 do
-                let m = &data.[flatten x y]
+                let m = &data[flatten x y]
                 if (m <> Mine) then
                     m <- detect data x y |> byte
 
-        assert (data.[i] <> Mine)
+        assert (data[i] <> Mine)
         data
 
     let status = Event<_, _>()
@@ -77,11 +77,11 @@ type MineGrid(w : int, h : int, count : int) as me =
             if c.Add p then
                 let struct (a, b) = p
                 let i = flatten a b
-                let m = &face.[i]
+                let m = &face[i]
                 if (m = TileMark.Tile) then
                     m <- TileMark.None
                     n <- n + 1
-                    match back.[i] with
+                    match back[i] with
                     | 0uy -> adjacent a b |> Seq.iter o.Enqueue
                     | Mine -> miss <- i
                     | _ -> ()
@@ -107,10 +107,10 @@ type MineGrid(w : int, h : int, count : int) as me =
 
         member __.Get(x, y) =
             let i = flatten x y
-            let b = if back |> isNull then -1 else int back.[i]
+            let b = if back |> isNull then -1 else int back[i]
             let m = b = int Mine
             let f = step = MineGridStatus.Over
-            match face.[i] with
+            match face[i] with
             | TileMark.Tile -> if f && m then MineData.Mine else MineData.Tile
             | TileMark.Flag -> if f && not m then MineData.FlagMiss else MineData.Flag
             | TileMark.What -> if f && not m then MineData.WhatMiss else MineData.What
@@ -128,10 +128,10 @@ type MineGrid(w : int, h : int, count : int) as me =
                 | _ -> invalidArg (nameof mark) "Invalid mine mark!"
 
             let i = flatten x y
-            let s = face.[i]
+            let s = face[i]
             if (s <> t) then
                 code <- code + 1
-                face.[i] <- t
+                face[i] <- t
                 if s = TileMark.Flag then
                     flag <- flag - 1
                 elif t = TileMark.Flag then

@@ -90,7 +90,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
             ()
 
         let item = $"Mines.Drawing.{key}"
-        let path = Application.Current.Resources.[item] :?> Path
+        let path = Application.Current.Resources[item] :?> Path
         closure path
 
     let mine = wrap "Mine"
@@ -102,7 +102,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
     let text =
         let t = Typeface(Typeface.Default.FontFamily, FontStyle.Normal, FontWeight.Bold)
         let f n = FormattedText(Text = string n, Typeface = t, FontSize = 22.0)
-        let b = Application.Current.Resources.["Mines.Drawing.Color.Font"] :?> IBrush
+        let b = Application.Current.Resources["Mines.Drawing.Color.Font"] :?> IBrush
 
         let seq = seq {
             for i = 0 to 8 do
@@ -117,13 +117,13 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
 
         let m = seq |> Map
         let invoke (d : DrawingContext) (rect : Rect) e =
-            m.[e] d rect
+            m[e] d rect
         invoke
 
     let colors =
         let seq = seq {
             let key i = $"Mines.Drawing.Color.{i}"
-            let get i = Application.Current.Resources.[key i] :?> ISolidColorBrush
+            let get i = Application.Current.Resources[key i] :?> ISolidColorBrush
 
             yield MineData.Mine, get "Mine"
             yield MineData.``0``, get "Back"
@@ -138,7 +138,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
 
     let render (d : DrawingContext) =
         let back rect m =
-            d.DrawRectangle(colors.[m], null, rect, radius, radius)
+            d.DrawRectangle(colors[m], null, rect, radius, radius)
 
         let face rect m =
             match m with
