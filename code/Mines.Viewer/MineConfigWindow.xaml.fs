@@ -59,6 +59,8 @@ type MineConfigWindow() as me =
 
     override __.OnOpened e =
         base.OnOpened e
+        if Design.IsDesignMode then
+            me.DataContext <- MineGrid(9, 9, 10)
         opened ()
         ()
 
