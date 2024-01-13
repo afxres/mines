@@ -87,7 +87,7 @@ type MainWindow() as me =
         async {
             match tag with
             | "reopen" -> reopen (MineGrid(g.XMax, g.YMax, g.MineCount) :> IMineGrid);
-            | "change" -> do! config g
+            | "change" -> if not Design.IsDesignMode then do! config g
             | "remove" -> do! Laboratory.remove g c
             | "remark" -> do! Laboratory.remark g c
             | "except" -> do! Laboratory.except g c
