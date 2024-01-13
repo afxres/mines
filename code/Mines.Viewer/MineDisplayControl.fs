@@ -4,7 +4,6 @@ open Avalonia
 open Avalonia.Controls
 open Avalonia.Controls.Shapes
 open Avalonia.Input
-open Avalonia.Interactivity
 open Avalonia.Media
 open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
