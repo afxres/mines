@@ -9,6 +9,7 @@ open Avalonia.Media
 open Mikodev.Mines.Annotations
 open Mikodev.Mines.Elements
 open System
+open System.Globalization
 
 type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
     inherit Control()
@@ -59,7 +60,7 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
             | _ -> ()
         ())
 
-    let doubleTappedHandler = EventHandler<RoutedEventArgs>(fun _ e ->
+    let doubleTappedHandler = EventHandler<TappedEventArgs>(fun _ e ->
         if up <> out && up = down then
             let struct (x, y) = up
             Operations.reduce grid x y |> ignore
@@ -82,9 +83,8 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
 
     let wrap key =
         let closure (p : Path) (d : DrawingContext) (rect : Rect) =
-            let c = d.CurrentTransform
-            let m = Matrix(c.M11, c.M12, c.M21, c.M22, rect.X, rect.Y)
-            let s = d.PushSetTransform m
+            let m = Matrix(1, 0, 0, 1, rect.X, rect.Y)
+            let s = d.PushTransform m
             p.Render d
             s.Dispose()
             ()
@@ -101,17 +101,16 @@ type MineDisplayControl(top : TopLevel, grid : IMineGrid) as me =
 
     let text =
         let t = Typeface(Typeface.Default.FontFamily, FontStyle.Normal, FontWeight.Bold)
-        let f n = FormattedText(Text = string n, Typeface = t, FontSize = 22.0)
         let b = Application.Current.Resources["Mines.Drawing.Color.Font"] :?> IBrush
+        let f n = FormattedText(textToFormat = string n, culture = CultureInfo.CurrentUICulture, flowDirection = FlowDirection.LeftToRight, emSize = 22.0, typeface = t, foreground = b)
 
         let seq = seq {
             for i = 0 to 8 do
                 let v = f i
-                let s = v.Bounds.Size
-                let x = (size - s.Width) / 2.0
-                let y = (size - s.Height) / 2.0
+                let x = (size - v.Width) / 2.0
+                let y = (size - v.Height) / 2.0
                 let closure (d : DrawingContext) (rect : Rect) =
-                    d.DrawText(b, Point(rect.X + x, rect.Y + y), v)
+                    d.DrawText(v, Point(rect.X + x, rect.Y + y))
                 yield enum<MineData> i, closure
         }
 

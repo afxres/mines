@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Mikodev.Mines.Elements</AssemblyName>
     <RootNamespace>Mikodev.Mines.Elements</RootNamespace>
-    <LangVersion>6.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="7.0.0" />
+    <PackageReference Update="FSharp.Core" Version="8.0.101" />
   </ItemGroup>
 
 </Project>

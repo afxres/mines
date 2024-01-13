@@ -47,7 +47,7 @@ type MainWindow() as me =
                     g <- t
                     v <- t.Version
                     f.Text <- $"{t.FlagCount} / {t.MineCount}"
-                    me.Renderer.AddDirty viewer.Child
+                    viewer.Child.InvalidateVisual()
                 do! Async.Sleep i
             ()
         }
