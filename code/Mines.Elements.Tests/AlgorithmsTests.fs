@@ -5,19 +5,6 @@ open System
 open Xunit
 
 type AlgorithmsTests() =
-    static member ``Array Data`` : obj array seq = seq {
-        yield [| box [| for i in 0..4 -> i |] |]
-        yield [| box [| for i in 2..9 -> double i |] |]
-    }
-
-    [<Theory>]
-    [<MemberData(nameof AlgorithmsTests.``Array Data``)>]
-    member __.``Shuffle`` (source : 'T array) =
-        let target = Array.copy source
-        Algorithms.shuffle (Span target)
-        Assert.Equal<'T>(Array.sort source, Array.sort target)
-        ()
-
     static member ``Index Data`` : obj array seq = seq {
         let tie w h x y array = [| box w; box h; box x; box y; box array |]
 

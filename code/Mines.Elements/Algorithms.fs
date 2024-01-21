@@ -2,16 +2,6 @@
 
 open System
 
-/// 洗牌算法 (直接操作数组)
-let shuffle (array : 'T Span) =
-    let r = Random()
-    for i = 0 to array.Length - 1 do
-        let x = r.Next(0, array.Length)
-        let a = array[i]
-        array[i] <- array[x]
-        array[x] <- a
-    ()
-
 /// 展开二维数组索引到一维数组索引
 let flatten (w : int) (h : int) =
     if w < 0 || h < 0 then
