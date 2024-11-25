@@ -25,28 +25,34 @@ type MineGrid(w : int, h : int, count : int) as me =
     let generate x y =
         let select a = fun struct (x, y) -> if Array.get a (flatten x y) = Mine then 1 else 0
         let detect a x y = Algorithms.adjacent w h x y |> Seq.sumBy (select a)
+        let pose = flatten x y
 
-        // 调用洗牌算法并忽略最后一个位置
-        let data : byte array = Array.zeroCreate (w * h)
-        let last = data.Length - 1
-        Array.fill data 0 count Mine
-        Random.Shared.Shuffle (data.AsSpan(0, last))
+        let random () =
+            // 调用洗牌算法并忽略最后一个位置
+            let data : byte array = Array.zeroCreate (w * h)
+            let last = data.Length - 1
+            Array.fill data 0 count Mine
+            Random.Shared.Shuffle (data.AsSpan(0, last))
 
-        // 交换第一次点击的位置和最后一个位置
-        let i = flatten x y
-        let k = data[last]
-        data[last] <- data[i]
-        data[i] <- k
+            // 交换第一次点击的位置和最后一个位置
+            assert (data[last] = 0uy)
+            data[last] <- data[pose]
+            data[pose] <- 0uy
 
-        // 计算每个位置周围的雷个数
-        for x = 0 to w - 1 do
-            for y = 0 to h - 1 do
-                let m = &data[flatten x y]
-                if (m <> Mine) then
-                    m <- detect data x y |> byte
+            // 计算每个位置周围的雷个数
+            for x = 0 to w - 1 do
+                for y = 0 to h - 1 do
+                    let m = &data[flatten x y]
+                    if (m <> Mine) then
+                        m <- detect data x y |> byte
 
-        assert (data[i] <> Mine)
-        data
+            assert (data[pose] <> Mine)
+            assert (data |> Seq.where (fun x -> x = Mine) |> Seq.length = count)
+            data
+
+        // 尝试让第一次点击为空格
+        let _, result = Seq.initInfinite (fun i -> i, random()) |> Seq.find (fun (i, v) -> i = 10 || v[pose] = 0uy)
+        result
 
     let status = Event<_, _>()
 
