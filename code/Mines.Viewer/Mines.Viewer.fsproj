@@ -27,10 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
+    <PackageReference Include="Avalonia" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="8.0.101" />
+    <PackageReference Update="FSharp.Core" Version="9.0.100" />
   </ItemGroup>
 
 </Project>
